@@ -84,7 +84,7 @@
       <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#2b472f] pb-2.5">
         <div class="flex items-center gap-2">
           <span class="px-2 py-0.5 rounded bg-[#86a657] text-[#162919] text-[10px] font-extrabold uppercase">Admin X-BAN MÊ</span>
-          <span class="text-xs text-[#e3f0c8]">Đăng sản phẩm (tối đa 6 ảnh + kích thước cm), chỉnh giỏ quà, ẩn/hiện món</span>
+          <span class="text-xs text-[#e3f0c8]">Đăng sản phẩm bằng link ảnh & kích thước cm, chỉnh giỏ quà, ẩn/hiện món</span>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" onclick="syncFromSheet(true)" class="px-3 py-1.5 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] text-[#d8ebb0] text-xs font-bold">
@@ -99,7 +99,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
         <!-- FORM ĐĂNG SẢN PHẨM MỚI -->
         <form onsubmit="handleAddProduct(event)" class="bg-[#0f1d11] border border-[#2b472f] rounded-2xl p-3.5 space-y-2.5">
-          <h4 class="font-extrabold text-[#b8d97c] text-xs uppercase">1. Đăng sản phẩm mới (tối đa 6 ảnh + cm)</h4>
+          <h4 class="font-extrabold text-[#b8d97c] text-xs uppercase">1. Đăng sản phẩm mới (link ảnh + kích thước cm)</h4>
 
           <input type="text" id="apName" required placeholder="Tên sản phẩm (vd: Khô bò đặc sản 200g) *" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
 
@@ -122,16 +122,11 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" id="apImageUrl" placeholder="Link ảnh (tối đa 6 link, cách nhau dấu phẩy)" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+            <input type="text" id="apImageUrl" placeholder="Dán link ảnh (tối đa 6 link, cách dấu phẩy)" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
             <select id="apStatus" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white">
               <option value="HIEN">Hiển thị (HIEN)</option>
               <option value="AN">Tạm ẩn (AN)</option>
             </select>
-          </div>
-
-          <div class="space-y-1">
-            <label class="block text-[11px] text-[#c7dc9c]">Hoặc chọn tối đa 6 file ảnh từ máy:</label>
-            <input type="file" id="apImageFile" accept="image/*" multiple class="w-full text-[11px] text-[#c7dc9c] file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#86a657] file:text-[#162919] file:font-bold" />
           </div>
 
           <input type="text" id="apDesc" placeholder="Mô tả ngắn sản phẩm" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
@@ -229,7 +224,7 @@
     <section id="emptyState" class="hidden soft-panel rounded-2xl p-8 text-center space-y-2">
       <i class="fa-solid fa-box-open text-2xl text-[#4b6b28]"></i>
       <p class="text-sm font-bold text-[#162919]">Chưa có sản phẩm nào trong mục này</p>
-      <p class="text-xs text-[#4a613b]">Vui lòng đăng sản phẩm trong mục Admin, thêm vào sheet SanPham hoặc bấm Đồng bộ.</p>
+      <p class="text-xs text-[#4a613b]">Vui lòng đăng sản phẩm bằng link ảnh trong mục Admin.</p>
     </section>
 
   </main>
@@ -320,7 +315,7 @@
             <img id="detailMainImg" src="" alt="" class="w-full h-full object-contain" />
             <div id="detailNoImgPlaceholder" class="hidden text-[#4a613b] text-xs font-semibold flex flex-col items-center gap-1.5">
               <i class="fa-regular fa-image text-2xl"></i>
-              <span>Sản phẩm chưa có ảnh</span>
+              <span>Chưa có ảnh</span>
             </div>
           </div>
           <div id="detailThumbRow" class="grid grid-cols-6 gap-2"></div>
@@ -481,6 +476,7 @@
     const CLEARANCE_BUFFER_CM = 1.5;
     const PACKING_FACTOR = 0.78;
     const MAX_PRODUCT_IMAGES = 6;
+    const LOCAL_PRODUCTS_KEY = "xbanme_local_products_v1";
 
     let giftBoxes = [
       { id: "BOX_1", name: "Giỏ Quà Nhỏ", length: 22, width: 15, height: 12, price: 25000, desc: "Phù hợp phối 1–2 món đặc sản gọn nhẹ" },
@@ -488,7 +484,7 @@
       { id: "BOX_3", name: "Giỏ Quà Lớn", length: 38, width: 28, height: 16, price: 45000, desc: "Giỏ lớn nhất cho nhiều món đặc sản" }
     ];
 
-    let products = [];
+    let products = JSON.parse(localStorage.getItem(LOCAL_PRODUCTS_KEY) || "[]");
 
     let currentTab = "giftbox";
     let currentCategory = "ALL";
@@ -536,8 +532,6 @@
     function toDirectImageUrl(url) {
       const s = String(url || "").trim();
       if (!s) return "";
-      if (s.startsWith("data:image/")) return s;
-
       const driveFileMatch = s.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
       if (driveFileMatch && driveFileMatch[1]) {
         return `https://lh3.googleusercontent.com/d/${driveFileMatch[1]}`;
@@ -569,8 +563,33 @@
         }
       }
 
-      const unique = Array.from(new Set(rawList.map(toDirectImageUrl).filter(Boolean)));
-      return unique.slice(0, MAX_PRODUCT_IMAGES);
+      return Array.from(new Set(rawList.map(toDirectImageUrl).filter(Boolean))).slice(0, MAX_PRODUCT_IMAGES);
+    }
+
+    function saveLocalProducts() {
+      try {
+        localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(products));
+      } catch (_) {}
+    }
+
+    function mergeSheetProducts(sheetList) {
+      const localMap = new Map(products.map(p => [String(p.id), p]));
+      const merged = sheetList.map(sp => {
+        const local = localMap.get(String(sp.id));
+        const sheetImgs = getProductImages(sp);
+        const localImgs = local ? getProductImages(local) : [];
+        const finalImgs = sheetImgs.length ? sheetImgs : localImgs;
+        return {
+          ...sp,
+          images: finalImgs,
+          image: finalImgs[0] || ""
+        };
+      });
+
+      const sheetIds = new Set(sheetList.map(sp => String(sp.id)));
+      const localOnly = products.filter(p => !sheetIds.has(String(p.id)));
+      products = [...localOnly, ...merged];
+      saveLocalProducts();
     }
 
     function formatVND(n) {
@@ -1098,37 +1117,6 @@
       document.getElementById("boxDescInput").value = box.desc || "";
     }
 
-    function compressImageToDataUrl(file, maxDim = 900, quality = 0.82) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = ev => {
-          const img = new Image();
-          img.onload = () => {
-            let { width, height } = img;
-            if (width > maxDim || height > maxDim) {
-              if (width > height) {
-                height = Math.round((height * maxDim) / width);
-                width = maxDim;
-              } else {
-                width = Math.round((width * maxDim) / height);
-                height = maxDim;
-              }
-            }
-            const canvas = document.createElement("canvas");
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL("image/jpeg", quality));
-          };
-          img.onerror = reject;
-          img.src = ev.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
     async function handleAddProduct(e) {
       e.preventDefault();
       const btn = document.getElementById("btnAddProduct");
@@ -1146,22 +1134,11 @@
         const status = document.getElementById("apStatus").value;
         const desc = document.getElementById("apDesc").value.trim();
 
-        const urlList = document.getElementById("apImageUrl").value
+        const finalImages = document.getElementById("apImageUrl").value
           .split(/[\n,|]+/)
           .map(s => toDirectImageUrl(s))
           .filter(Boolean)
           .slice(0, MAX_PRODUCT_IMAGES);
-
-        const fileInput = document.getElementById("apImageFile");
-        const uploadedList = [];
-        if (fileInput.files && fileInput.files.length) {
-          const files = Array.from(fileInput.files).slice(0, MAX_PRODUCT_IMAGES);
-          for (const f of files) {
-            uploadedList.push(await compressImageToDataUrl(f));
-          }
-        }
-
-        const finalImages = [...uploadedList, ...urlList].slice(0, MAX_PRODUCT_IMAGES);
 
         const newProd = {
           id: "XB" + Date.now().toString().slice(-5),
@@ -1179,6 +1156,7 @@
         };
 
         products.unshift(newProd);
+        saveLocalProducts();
         renderProducts();
 
         if (XBANME_GAS_URL) {
@@ -1188,11 +1166,7 @@
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({
               action: "addProduct",
-              product: {
-                ...newProd,
-                image: finalImages[0] || "",
-                images: finalImages
-              }
+              product: newProd
             })
           });
         }
@@ -1242,6 +1216,7 @@
 
     async function toggleProductStatus(prodId, nextStatus) {
       products = products.map(p => String(p.id) === String(prodId) ? { ...p, status: nextStatus } : p);
+      saveLocalProducts();
       renderProducts();
 
       if (XBANME_GAS_URL) {
@@ -1364,7 +1339,7 @@
         const res = await fetch(XBANME_GAS_URL + "?t=" + Date.now());
         const data = await res.json();
         if (data && Array.isArray(data.products)) {
-          products = data.products;
+          mergeSheetProducts(data.products);
         }
         if (data && Array.isArray(data.boxes) && data.boxes.length) {
           giftBoxes = data.boxes;
