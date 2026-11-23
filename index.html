@@ -6,6 +6,7 @@
   <title>HỘ KINH DOANH X-BAN MÊ • Phối Giỏ Quà Nông Sản Buôn Ma Thuột</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap');
     body {
@@ -43,17 +44,22 @@
       </div>
 
       <div class="flex items-center gap-1.5 shrink-0">
-        <button onclick="syncFromSheet(true)" id="btnSync" class="p-2 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] border border-[#3a6140] text-[#d8ebb0] text-xs transition" title="Đồng bộ dữ liệu">
+        <button type="button" onclick="openShareQrModal()" class="px-2.5 py-1.5 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] border border-[#3a6140] text-[#d8ebb0] text-xs font-bold flex items-center gap-1 transition" title="Chia sẻ & mã QR">
+          <i class="fa-solid fa-qrcode text-[#c7e088]"></i>
+          <span class="hidden sm:inline">Chia sẻ / QR</span>
+        </button>
+
+        <button type="button" onclick="syncFromSheet(true)" id="btnSync" class="p-2 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] border border-[#3a6140] text-[#d8ebb0] text-xs transition" title="Đồng bộ dữ liệu">
           <i class="fa-solid fa-rotate" id="syncIcon"></i>
         </button>
 
-        <button onclick="toggleCart(true)" class="relative px-3 py-1.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-xs flex items-center gap-1.5 transition">
+        <button type="button" onclick="toggleCart(true)" class="relative px-3 py-1.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-xs flex items-center gap-1.5 transition">
           <i class="fa-solid fa-gift"></i>
           <span>Giỏ quà</span>
           <span id="cartBadge" class="px-1.5 py-0.2 rounded-full bg-[#162919] text-[#d6ee9e] text-[10px] font-black">0</span>
         </button>
 
-        <button onclick="openAdminModal()" id="btnAdmin" class="p-2 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] border border-[#3a6140] text-[#c7dc9c] hover:text-white text-xs transition" title="Quản trị Admin">
+        <button type="button" onclick="openAdminModal()" id="btnAdmin" class="p-2 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] border border-[#3a6140] text-[#c7dc9c] hover:text-white text-xs transition" title="Quản trị Admin">
           <i class="fa-solid fa-lock" id="adminLockIcon"></i>
         </button>
       </div>
@@ -61,10 +67,10 @@
 
     <!-- MAIN TABS -->
     <div class="max-w-5xl mx-auto px-3.5 pb-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-      <button onclick="switchTab('giftbox')" id="tab-giftbox" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-[#86a657] text-[#162919] shrink-0 transition">
+      <button type="button" onclick="switchTab('giftbox')" id="tab-giftbox" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-[#86a657] text-[#162919] shrink-0 transition">
         <i class="fa-solid fa-box-open mr-1"></i>Phối Giỏ Quà
       </button>
-      <button onclick="switchTab('store')" id="tab-store" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#213b25] text-[#d8ebb0] hover:bg-[#2b4c30] border border-[#3a6140] shrink-0 transition">
+      <button type="button" onclick="switchTab('store')" id="tab-store" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#213b25] text-[#d8ebb0] hover:bg-[#2b4c30] border border-[#3a6140] shrink-0 transition">
         <i class="fa-solid fa-store mr-1"></i>Sản Phẩm X-BAN MÊ
       </button>
     </div>
@@ -78,13 +84,13 @@
       <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#2b472f] pb-2.5">
         <div class="flex items-center gap-2">
           <span class="px-2 py-0.5 rounded bg-[#86a657] text-[#162919] text-[10px] font-extrabold uppercase">Admin X-BAN MÊ</span>
-          <span class="text-xs text-[#e3f0c8]">Đăng sản phẩm kèm kích thước (cm), chỉnh giỏ quà, ẩn/hiện món</span>
+          <span class="text-xs text-[#e3f0c8]">Đăng sản phẩm (tối đa 6 ảnh + kích thước cm), chỉnh giỏ quà, ẩn/hiện món</span>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="syncFromSheet(true)" class="px-3 py-1.5 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] text-[#d8ebb0] text-xs font-bold">
+          <button type="button" onclick="syncFromSheet(true)" class="px-3 py-1.5 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] text-[#d8ebb0] text-xs font-bold">
             <i class="fa-solid fa-rotate mr-1"></i>Tải lại Sheet
           </button>
-          <button onclick="logoutAdmin()" class="px-2.5 py-1.5 rounded-xl bg-rose-900/70 hover:bg-rose-800 text-rose-100 text-xs font-bold">
+          <button type="button" onclick="logoutAdmin()" class="px-2.5 py-1.5 rounded-xl bg-rose-900/70 hover:bg-rose-800 text-rose-100 text-xs font-bold">
             Thoát Admin
           </button>
         </div>
@@ -93,18 +99,19 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
         <!-- FORM ĐĂNG SẢN PHẨM MỚI -->
         <form onsubmit="handleAddProduct(event)" class="bg-[#0f1d11] border border-[#2b472f] rounded-2xl p-3.5 space-y-2.5">
-          <h4 class="font-extrabold text-[#b8d97c] text-xs uppercase">1. Đăng sản phẩm mới (kèm kích thước cm)</h4>
+          <h4 class="font-extrabold text-[#b8d97c] text-xs uppercase">1. Đăng sản phẩm mới (tối đa 6 ảnh + cm)</h4>
 
-          <input type="text" id="apName" required placeholder="Tên sản phẩm (vd: Cà phê Robusta rang 250g) *" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+          <input type="text" id="apName" required placeholder="Tên sản phẩm (vd: Khô bò đặc sản 200g) *" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
 
           <div class="grid grid-cols-2 gap-2">
             <select id="apCategory" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white">
+              <option value="Khô bò">Khô bò</option>
               <option value="Cà phê rang">Cà phê rang</option>
               <option value="Trái cây sấy">Trái cây sấy</option>
               <option value="Hạt dinh dưỡng">Hạt dinh dưỡng</option>
               <option value="Đặc sản khác">Đặc sản khác</option>
             </select>
-            <input type="text" id="apNetWeight" placeholder="Khối lượng tịnh (vd: 250g)" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+            <input type="text" id="apNetWeight" placeholder="Khối lượng tịnh (vd: 200g)" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
           </div>
 
           <div class="grid grid-cols-4 gap-2">
@@ -114,15 +121,18 @@
             <input type="number" id="apHeight" required min="1" step="0.1" placeholder="Cao (cm) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="apImageUrl" placeholder="Link ảnh hoặc chọn file bên dưới" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" id="apImageUrl" placeholder="Link ảnh (tối đa 6 link, cách nhau dấu phẩy)" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
             <select id="apStatus" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white">
               <option value="HIEN">Hiển thị (HIEN)</option>
               <option value="AN">Tạm ẩn (AN)</option>
             </select>
           </div>
 
-          <input type="file" id="apImageFile" accept="image/*" class="w-full text-[11px] text-[#c7dc9c] file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#86a657] file:text-[#162919] file:font-bold" />
+          <div class="space-y-1">
+            <label class="block text-[11px] text-[#c7dc9c]">Hoặc chọn tối đa 6 file ảnh từ máy:</label>
+            <input type="file" id="apImageFile" accept="image/*" multiple class="w-full text-[11px] text-[#c7dc9c] file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#86a657] file:text-[#162919] file:font-bold" />
+          </div>
 
           <input type="text" id="apDesc" placeholder="Mô tả ngắn sản phẩm" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
 
@@ -198,11 +208,12 @@
     <!-- FILTER & SEARCH -->
     <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
       <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="categoryFilters">
-        <button onclick="setCategory('ALL')" data-cat="ALL" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-[#162919] text-[#eef4d4] shrink-0">Tất cả</button>
-        <button onclick="setCategory('Cà phê rang')" data-cat="Cà phê rang" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Cà phê rang</button>
-        <button onclick="setCategory('Trái cây sấy')" data-cat="Trái cây sấy" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Trái cây sấy</button>
-        <button onclick="setCategory('Hạt dinh dưỡng')" data-cat="Hạt dinh dưỡng" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Hạt dinh dưỡng</button>
-        <button onclick="setCategory('Đặc sản khác')" data-cat="Đặc sản khác" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Đặc sản khác</button>
+        <button type="button" onclick="setCategory('ALL')" data-cat="ALL" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-[#162919] text-[#eef4d4] shrink-0">Tất cả</button>
+        <button type="button" onclick="setCategory('Khô bò')" data-cat="Khô bò" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Khô bò</button>
+        <button type="button" onclick="setCategory('Cà phê rang')" data-cat="Cà phê rang" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Cà phê rang</button>
+        <button type="button" onclick="setCategory('Trái cây sấy')" data-cat="Trái cây sấy" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Trái cây sấy</button>
+        <button type="button" onclick="setCategory('Hạt dinh dưỡng')" data-cat="Hạt dinh dưỡng" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Hạt dinh dưỡng</button>
+        <button type="button" onclick="setCategory('Đặc sản khác')" data-cat="Đặc sản khác" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Đặc sản khác</button>
       </div>
 
       <div class="relative w-full sm:w-64">
@@ -211,14 +222,14 @@
       </div>
     </section>
 
-    <!-- PRODUCT GRID -->
-    <section id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></section>
+    <!-- PRODUCT GRID (ẢNH TO RỘNG, ÍT NÉN) -->
+    <section id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></section>
 
     <!-- EMPTY STATE -->
     <section id="emptyState" class="hidden soft-panel rounded-2xl p-8 text-center space-y-2">
       <i class="fa-solid fa-box-open text-2xl text-[#4b6b28]"></i>
-      <p class="text-sm font-bold text-[#162919]">Chưa có sản phẩm trong mục này</p>
-      <p class="text-xs text-[#4a613b]">Liên hệ Hotline 0838 346 346 hoặc bấm Đồng bộ để tải dữ liệu từ Google Sheets.</p>
+      <p class="text-sm font-bold text-[#162919]">Chưa có sản phẩm nào trong mục này</p>
+      <p class="text-xs text-[#4a613b]">Vui lòng đăng sản phẩm trong mục Admin, thêm vào sheet SanPham hoặc bấm Đồng bộ.</p>
     </section>
 
   </main>
@@ -251,6 +262,103 @@
     </div>
   </footer>
 
+  <!-- ==================== MODAL: CHI TIẾT SẢN PHẨM (TỐI ĐA 6 ẢNH) ==================== -->
+  <div id="productDetailModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3" onclick="if(event.target===this) closeModal('productDetailModal')">
+    <div class="forest-card rounded-3xl max-w-xl w-full overflow-hidden text-xs shadow-2xl border-[#86a657]">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-[#2b472f] bg-[#0f1d11]">
+        <div class="flex items-center gap-2">
+          <span id="detailCatBadge" class="px-2.5 py-0.5 rounded-full bg-[#86a657] text-[#162919] text-[10px] font-extrabold uppercase">Khô bò</span>
+          <span id="detailImgCount" class="text-[11px] text-[#c7dc9c] font-bold"></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="shareCurrentProduct()" class="px-2.5 py-1 rounded-lg bg-[#213b25] hover:bg-[#2b4c30] text-[#c7e088] font-bold text-[11px] flex items-center gap-1">
+            <i class="fa-solid fa-share-nodes"></i>Chia sẻ
+          </button>
+          <button type="button" onclick="closeModal('productDetailModal')" class="text-[#c7dc9c] hover:text-white p-1">
+            <i class="fa-solid fa-xmark text-base"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-3.5 max-h-[85vh] overflow-y-auto">
+        <!-- KHUNG ẢNH CHÍNH TO + DÃY THUMBNAIL TỐI ĐA 6 ẢNH -->
+        <div class="space-y-2.5">
+          <div class="w-full h-64 sm:h-72 rounded-2xl bg-[#f4f6f8] border border-[#2b472f] overflow-hidden flex items-center justify-center">
+            <img id="detailMainImg" src="" alt="" class="w-full h-full object-contain" />
+          </div>
+          <div id="detailThumbRow" class="grid grid-cols-6 gap-2"></div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 id="detailName" class="text-base sm:text-lg font-black text-white leading-snug"></h3>
+            <p id="detailPrice" class="text-lg font-black text-[#c7e088]"></p>
+          </div>
+
+          <div class="bg-[#0f1d11] border border-[#2b472f] rounded-2xl p-2.5 grid grid-cols-3 gap-2 text-[11px]">
+            <div>
+              <span class="text-[#9ab57c] block">Khối lượng tịnh</span>
+              <span id="detailWeight" class="font-bold text-white"></span>
+            </div>
+            <div>
+              <span class="text-[#9ab57c] block">Kích thước món</span>
+              <span id="detailDims" class="font-bold text-white"></span>
+            </div>
+            <div>
+              <span class="text-[#9ab57c] block">Chừa dư xếp giỏ</span>
+              <span class="font-bold text-[#c7e088]">+1.5 cm</span>
+            </div>
+          </div>
+
+          <p id="detailDesc" class="text-xs text-[#e3f0c8] leading-relaxed"></p>
+        </div>
+
+        <div id="detailFitNotice" class="p-2.5 rounded-xl text-[11px] font-bold"></div>
+
+        <div class="flex items-center justify-between gap-2.5 pt-1 border-t border-[#2b472f]">
+          <div class="flex items-center gap-2 bg-[#0f1d11] border border-[#3a6140] rounded-xl px-2 py-1">
+            <button type="button" onclick="changeDetailQty(-1)" class="w-7 h-7 rounded-lg bg-[#213b25] hover:bg-[#2b4c30] text-white font-black">-</button>
+            <span id="detailQty" class="w-6 text-center font-extrabold text-white">1</span>
+            <button type="button" onclick="changeDetailQty(1)" class="w-7 h-7 rounded-lg bg-[#213b25] hover:bg-[#2b4c30] text-white font-black">+</button>
+          </div>
+
+          <button type="button" id="detailAddBtn" onclick="addDetailToBox()" class="flex-1 py-2.5 px-4 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-black text-xs transition">
+            + Cho vào giỏ quà
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: CHIA SẺ & MÃ QR ==================== -->
+  <div id="shareQrModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3" onclick="if(event.target===this) closeModal('shareQrModal')">
+    <div class="forest-card rounded-3xl max-w-sm w-full p-5 space-y-3.5 text-xs shadow-2xl border-[#86a657] text-center">
+      <div class="flex items-center justify-between border-b border-[#2b472f] pb-2">
+        <h3 class="text-sm font-black text-white flex items-center gap-1.5">
+          <i class="fa-solid fa-qrcode text-[#c7e088]"></i>CHIA SẺ & MÃ QR X-BAN MÊ
+        </h3>
+        <button type="button" onclick="closeModal('shareQrModal')" class="text-[#c7dc9c] hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+      </div>
+
+      <p id="shareTargetLabel" class="text-[11px] text-[#c7dc9c] font-semibold"></p>
+
+      <div class="bg-white p-3.5 rounded-2xl inline-flex items-center justify-center mx-auto">
+        <div id="qrCodeBox"></div>
+      </div>
+
+      <div class="flex items-center gap-1.5 bg-[#0f1d11] border border-[#3a6140] rounded-xl px-2.5 py-2">
+        <input type="text" id="shareUrlInput" readonly class="flex-1 bg-transparent text-[11px] text-[#e3f0c8] focus:outline-none truncate" />
+        <button type="button" onclick="copyShareLink()" class="px-2.5 py-1 rounded-lg bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-[11px] shrink-0">
+          Copy link
+        </button>
+      </div>
+
+      <button type="button" onclick="nativeShareLink()" class="w-full py-2.5 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] border border-[#3a6140] text-white font-extrabold text-xs">
+        <i class="fa-solid fa-arrow-up-from-bracket mr-1.5 text-[#c7e088]"></i>Chia sẻ nhanh qua ứng dụng
+      </button>
+    </div>
+  </div>
+
   <!-- ==================== SLIDE-OVER: GIỎ QUÀ & ĐẶT ĐƠN ==================== -->
   <div id="cartDrawer" class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex justify-end">
     <div class="forest-card border-l border-[#2b472f] w-full max-w-md h-full flex flex-col justify-between p-4 text-xs shadow-2xl">
@@ -265,7 +373,7 @@
           <button type="button" id="btnClearCart" onclick="clearCart()" class="hidden px-2 py-1 rounded-lg bg-rose-900/70 hover:bg-rose-800 text-rose-100 text-[11px] font-bold">
             Xóa hết
           </button>
-          <button onclick="toggleCart(false)" class="text-[#c7dc9c] hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+          <button type="button" onclick="toggleCart(false)" class="text-[#c7dc9c] hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
         </div>
       </div>
 
@@ -313,7 +421,7 @@
         <a id="orderConfirmLink" href="tel:0838346346" class="flex-1 py-2.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold">
           Gọi Hotline 0838 346 346
         </a>
-        <button onclick="closeModal('orderSuccessModal')" class="px-4 py-2.5 rounded-xl bg-[#213b25] text-[#d8ebb0] font-bold">
+        <button type="button" onclick="closeModal('orderSuccessModal')" class="px-4 py-2.5 rounded-xl bg-[#213b25] text-[#d8ebb0] font-bold">
           Đóng
         </button>
       </div>
@@ -325,10 +433,10 @@
     <div class="forest-card rounded-3xl max-w-sm w-full p-5 space-y-3 text-xs shadow-2xl">
       <div class="flex items-center justify-between border-b border-[#2b472f] pb-2">
         <h3 class="text-sm font-black text-white">ĐĂNG NHẬP ADMIN X-BAN MÊ</h3>
-        <button onclick="closeModal('adminModal')" class="text-[#c7dc9c] hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" onclick="closeModal('adminModal')" class="text-[#c7dc9c] hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <input type="password" id="adminPinInput" placeholder="Nhập mã PIN quản trị..." class="w-full px-3 py-2 rounded-xl bg-[#0f1d11] border border-[#3a6140] text-white" />
-      <button onclick="verifyAdmin()" class="w-full py-2.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold">Xác nhận</button>
+      <button type="button" onclick="verifyAdmin()" class="w-full py-2.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold">Xác nhận</button>
     </div>
   </div>
 
@@ -340,7 +448,8 @@
     const SHOP_HOTLINE = "0838346346";
     const CLEARANCE_BUFFER_CM = 1.5; // Luôn chừa dư +1.5 cm
     const PACKING_FACTOR = 0.78;
-    const FALLBACK_IMG = "https://images.unsplash.com/photo-1559056199-641a0ac8b55f?auto=format&fit=crop&w=600&h=600&q=80";
+    const MAX_PRODUCT_IMAGES = 6; // Tối đa 6 ảnh mỗi sản phẩm
+    const FALLBACK_IMG = "";
 
     // 3 GIỎ QUÀ MẶC ĐỊNH (Dài x Rộng x Cao tính bằng cm)
     let giftBoxes = [
@@ -349,21 +458,31 @@
       { id: "BOX_3", name: "Giỏ Quà Lớn", length: 38, width: 28, height: 16, price: 45000, desc: "Giỏ lớn nhất cho nhiều món đặc sản" }
     ];
 
-    // DANH SÁCH SẢN PHẨM MẪU (Dài x Rộng x Cao tính bằng cm)
-    let products = [
-      { id: "XB_01", name: "Cà phê Robusta rang mộc 250g", category: "Cà phê rang", netWeight: "250g", price: 115000, length: 9, width: 9, height: 11.5, status: "HIEN", image: FALLBACK_IMG, desc: "Rang chuẩn độ, vị đậm rõ ràng" },
-      { id: "XB_02", name: "Cà phê Robusta Honey 250g", category: "Cà phê rang", netWeight: "250g", price: 135000, length: 9, width: 9, height: 11.5, status: "HIEN", image: FALLBACK_IMG, desc: "Sơ chế Honey ngọt dịu tự nhiên" },
-      { id: "XB_03", name: "Sầu riêng sấy thăng hoa 120g", category: "Trái cây sấy", netWeight: "120g", price: 165000, length: 10, width: 10, height: 12, status: "HIEN", image: FALLBACK_IMG, desc: "Giòn xốp, thơm đặc trưng Đắk Lắk" },
-      { id: "XB_04", name: "Hạt mắc ca sấy nứt vỏ 300g", category: "Hạt dinh dưỡng", netWeight: "300g", price: 145000, length: 11, width: 11, height: 12, status: "HIEN", image: FALLBACK_IMG, desc: "Nhân bùi béo, nứt vỏ sẵn" },
-      { id: "XB_05", name: "Hạt điều rang muối 300g", category: "Hạt dinh dưỡng", netWeight: "300g", price: 125000, length: 11, width: 11, height: 12, status: "HIEN", image: FALLBACK_IMG, desc: "Rang muối giòn rụm" },
-      { id: "XB_06", name: "Thịt bò khô đặc sản 200g", category: "Đặc sản khác", netWeight: "200g", price: 175000, length: 10, width: 10, height: 11.5, status: "HIEN", image: FALLBACK_IMG, desc: "Đậm vị đặc sản vùng cao" }
-    ];
+    // DANH SÁCH SẢN PHẨM (trống để nạp từ Google Sheets hoặc đăng mới qua Admin)
+    let products = [];
 
     let currentTab = "giftbox";
     let currentCategory = "ALL";
     let selectedBoxId = giftBoxes[1].id;
     let boxItems = JSON.parse(localStorage.getItem("xbanme_box_items") || "[]");
     let isAdmin = sessionStorage.getItem("xbanme_admin") === "1";
+    let activeDetailProductId = null;
+    let activeDetailImgIndex = 0;
+    let detailQty = 1;
+    let currentShareUrl = window.location.href;
+    let currentShareTitle = document.title;
+
+    function getProductImages(prod) {
+      let rawList = [];
+      if (Array.isArray(prod.images) && prod.images.length) {
+        rawList = prod.images;
+      } else if (typeof prod.images === "string" && prod.images.trim()) {
+        rawList = prod.images.split(/[\n,|]+/).map(s => s.trim()).filter(Boolean);
+      } else if (prod.image) {
+        rawList = [prod.image];
+      }
+      return rawList.filter(Boolean).slice(0, MAX_PRODUCT_IMAGES);
+    }
 
     function formatVND(n) {
       return Number(n || 0).toLocaleString("vi-VN") + "đ";
@@ -429,6 +548,176 @@
         temp.push({ product: item.product, qty: item.qty });
       }
       return { ok: true, reason: "" };
+    }
+
+    function openProductDetail(prodId) {
+      const prod = products.find(p => String(p.id) === String(prodId));
+      if (!prod) return;
+
+      activeDetailProductId = prod.id;
+      activeDetailImgIndex = 0;
+      detailQty = 1;
+
+      document.getElementById("detailCatBadge").innerText = prod.category || "Đặc sản Đắk Lắk";
+      document.getElementById("detailName").innerText = prod.name;
+      document.getElementById("detailPrice").innerText = formatVND(prod.price);
+      document.getElementById("detailWeight").innerText = prod.netWeight || "Theo tiêu chuẩn NSX";
+      document.getElementById("detailDims").innerText = `${prod.length} × ${prod.width} × ${prod.height} cm`;
+      document.getElementById("detailDesc").innerText = prod.desc || "Đặc sản nông sản tuyển chọn từ X-BAN MÊ Buôn Ma Thuột.";
+
+      renderDetailGallery(prod);
+      refreshDetailModalState();
+      document.getElementById("productDetailModal").classList.remove("hidden");
+    }
+
+    function renderDetailGallery(prod) {
+      const imgs = getProductImages(prod);
+      const mainWrap = document.getElementById("detailMainImg").parentElement;
+      const mainImg = document.getElementById("detailMainImg");
+      const thumbRow = document.getElementById("detailThumbRow");
+
+      if (!imgs.length) {
+        mainImg.classList.add("hidden");
+        thumbRow.innerHTML = "";
+        document.getElementById("detailImgCount").innerText = `0/${MAX_PRODUCT_IMAGES} ảnh`;
+        mainWrap.dataset.empty = "1";
+        return;
+      }
+
+      mainImg.classList.remove("hidden");
+      if (activeDetailImgIndex >= imgs.length) activeDetailImgIndex = 0;
+
+      mainImg.src = imgs[activeDetailImgIndex];
+      mainImg.alt = prod.name;
+      document.getElementById("detailImgCount").innerText = `Ảnh ${activeDetailImgIndex + 1}/${imgs.length} (tối đa ${MAX_PRODUCT_IMAGES} ảnh)`;
+
+      thumbRow.innerHTML = imgs.map((src, idx) => {
+        const active = idx === activeDetailImgIndex;
+        return `
+          <button type="button" onclick="selectDetailImage(${idx})" class="aspect-square rounded-xl overflow-hidden border-2 bg-[#f4f6f8] transition ${
+            active ? "border-[#86a657] ring-2 ring-[#86a657]/50" : "border-[#2b472f] opacity-75 hover:opacity-100"
+          }">
+            <img src="${src}" alt="${prod.name} ${idx + 1}" class="w-full h-full object-cover" />
+          </button>
+        `;
+      }).join("");
+    }
+
+    function selectDetailImage(idx) {
+      const prod = products.find(p => String(p.id) === String(activeDetailProductId));
+      if (!prod) return;
+      activeDetailImgIndex = idx;
+      renderDetailGallery(prod);
+    }
+
+    function refreshDetailModalState() {
+      const prod = products.find(p => String(p.id) === String(activeDetailProductId));
+      if (!prod) return;
+
+      const box = getActiveBox();
+      const fit = checkProductFitsBox(prod, box, detailQty, boxItems);
+      const notice = document.getElementById("detailFitNotice");
+      const addBtn = document.getElementById("detailAddBtn");
+
+      document.getElementById("detailQty").innerText = detailQty;
+
+      if (fit.ok) {
+        notice.className = "p-2.5 rounded-xl bg-[#213b25] border border-[#3a6140] text-[#c7e088] text-[11px] font-bold";
+        notice.innerText = `✓ Vừa thoải mái trong ${box.name} (${box.length}×${box.width}×${box.height} cm) khi chừa dư +${CLEARANCE_BUFFER_CM} cm.`;
+        addBtn.disabled = false;
+        addBtn.className = "flex-1 py-2.5 px-4 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-black text-xs transition";
+        addBtn.innerText = `+ Cho vào giỏ quà (${formatVND(prod.price * detailQty)})`;
+      } else {
+        notice.className = "p-2.5 rounded-xl bg-rose-950/80 border border-rose-400/50 text-rose-200 text-[11px] font-bold";
+        notice.innerText = `⚠️ ${fit.reason}`;
+        addBtn.disabled = true;
+        addBtn.className = "flex-1 py-2.5 px-4 rounded-xl bg-[#244028] text-[#8ca878] font-bold text-xs cursor-not-allowed";
+        addBtn.innerText = "Không vừa giỏ hiện tại";
+      }
+    }
+
+    function changeDetailQty(delta) {
+      const next = detailQty + delta;
+      if (next < 1) return;
+      detailQty = next;
+      refreshDetailModalState();
+    }
+
+    function addDetailToBox() {
+      const prod = products.find(p => String(p.id) === String(activeDetailProductId));
+      if (!prod) return;
+      if (currentTab !== "giftbox") switchTab("giftbox");
+
+      const check = checkProductFitsBox(prod, getActiveBox(), detailQty, boxItems);
+      if (!check.ok) {
+        refreshDetailModalState();
+        return;
+      }
+
+      hideFitWarning();
+      const idx = boxItems.findIndex(it => String(it.product.id) === String(prod.id));
+      if (idx >= 0) boxItems[idx].qty += detailQty;
+      else boxItems.push({ product: prod, qty: detailQty });
+
+      saveBoxItems();
+      renderAll();
+      closeModal("productDetailModal");
+    }
+
+    function buildQrCode(url) {
+      const box = document.getElementById("qrCodeBox");
+      box.innerHTML = "";
+      if (typeof QRCode !== "undefined") {
+        new QRCode(box, {
+          text: url,
+          width: 176,
+          height: 176,
+          colorDark: "#162919",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+    }
+
+    function openShareQrModal(customUrl = "", customTitle = "", labelText = "") {
+      const baseOrigin = window.location.origin && window.location.origin !== "null"
+        ? window.location.origin + window.location.pathname
+        : "https://xbanmebmt.github.io/";
+      currentShareUrl = customUrl || baseOrigin;
+      currentShareTitle = customTitle || "HỘ KINH DOANH X-BAN MÊ • Buôn Ma Thuột";
+
+      document.getElementById("shareTargetLabel").innerText = labelText || "Quét mã QR hoặc chia sẻ link gian hàng X-BAN MÊ";
+      document.getElementById("shareUrlInput").value = currentShareUrl;
+      buildQrCode(currentShareUrl);
+      document.getElementById("shareQrModal").classList.remove("hidden");
+    }
+
+    function shareCurrentProduct() {
+      const prod = products.find(p => String(p.id) === String(activeDetailProductId));
+      if (!prod) return;
+      const baseOrigin = window.location.origin && window.location.origin !== "null"
+        ? window.location.origin + window.location.pathname
+        : "https://xbanmebmt.github.io/";
+      const prodUrl = `${baseOrigin}?sp=${encodeURIComponent(prod.id)}`;
+      openShareQrModal(prodUrl, `${prod.name} - X-BAN MÊ`, `Sản phẩm: ${prod.name}`);
+    }
+
+    function copyShareLink() {
+      const input = document.getElementById("shareUrlInput");
+      input.select();
+      navigator.clipboard?.writeText(currentShareUrl).catch(() => {});
+      document.execCommand?.("copy");
+      alert("Đã sao chép đường link!");
+    }
+
+    async function nativeShareLink() {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: currentShareTitle, url: currentShareUrl });
+          return;
+        } catch (_) {}
+      }
+      copyShareLink();
     }
 
     function selectGiftBox(boxId) {
@@ -593,29 +882,41 @@
       grid.innerHTML = visible.map(p => {
         const isHidden = String(p.status || "").toUpperCase() === "AN";
         const fit = checkProductFitsBox(p, box, 1, boxItems);
+        const imgs = getProductImages(p);
+        const coverImg = imgs[0] || "";
 
         return `
           <article class="forest-card rounded-2xl overflow-hidden flex flex-col justify-between ${fit.ok ? "" : "opacity-75"}">
             <div>
-              <div class="relative aspect-square bg-[#0f1d11] overflow-hidden">
-                <img src="${p.image || FALLBACK_IMG}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy" />
+              <div onclick="openProductDetail('${p.id}')" class="relative h-52 sm:h-56 bg-[#0f1d11] overflow-hidden cursor-pointer group flex items-center justify-center">
+                ${
+                  coverImg
+                    ? `<img src="${coverImg}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy" />`
+                    : `<div class="text-[#8ca878] text-xs font-semibold flex flex-col items-center gap-1"><i class="fa-regular fa-image text-xl"></i><span>Chưa có ảnh</span></div>`
+                }
+                ${imgs.length > 1 ? `<span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-black/70 text-white text-[10px] font-bold"><i class="fa-solid fa-images mr-1"></i>${imgs.length} ảnh</span>` : ""}
                 ${isHidden ? `<span class="absolute top-2 left-2 px-2 py-0.5 rounded-lg bg-rose-900/90 border border-rose-400/40 text-[10px] font-extrabold text-rose-100">Đang ẩn (AN)</span>` : ""}
               </div>
-              <div class="p-3 space-y-1">
-                <p class="text-[10px] font-bold text-[#c7e088]">${p.category || "Đặc sản Đắk Lắk"}${p.netWeight ? ` • ${p.netWeight}` : ""}</p>
-                <h3 class="text-xs sm:text-sm font-extrabold text-white line-clamp-2">${p.name}</h3>
-                <p class="text-[11px] font-semibold text-[#d8ebb0]">Kích thước: ${p.length} × ${p.width} × ${p.height} cm</p>
+              <div onclick="openProductDetail('${p.id}')" class="p-3.5 space-y-1 cursor-pointer">
+                <p class="text-[11px] font-bold text-[#c7e088]">${p.category || "Đặc sản Đắk Lắk"}${p.netWeight ? ` • ${p.netWeight}` : ""}</p>
+                <h3 class="text-sm sm:text-base font-extrabold text-white line-clamp-2 hover:text-[#c7e088] transition">${p.name}</h3>
+                <p class="text-xs font-semibold text-[#d8ebb0]">Kích thước: ${p.length} × ${p.width} × ${p.height} cm</p>
               </div>
             </div>
 
-            <div class="px-3 pb-3 pt-1 space-y-2">
-              <div class="text-sm sm:text-base font-black text-[#c7e088]">${formatVND(p.price)}</div>
+            <div class="px-3.5 pb-3.5 pt-1 space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-base font-black text-[#c7e088]">${formatVND(p.price)}</span>
+                <button type="button" onclick="openProductDetail('${p.id}')" class="text-xs font-bold text-[#c7dc9c] hover:text-white underline">
+                  Xem chi tiết
+                </button>
+              </div>
               ${
                 fit.ok
-                  ? `<button type="button" onclick="addToBox('${p.id}')" class="w-full py-1.5 px-2 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-[11px] transition">
+                  ? `<button type="button" onclick="addToBox('${p.id}')" class="w-full py-2 px-3 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-xs transition">
                        + Cho vào giỏ quà
                      </button>`
-                  : `<button type="button" onclick="showFitWarning('${fit.reason.replace(/'/g, "\\'")}')" class="w-full py-1.5 px-2 rounded-xl bg-rose-950/80 border border-rose-400/50 text-rose-200 font-bold text-[11px]">
+                  : `<button type="button" onclick="showFitWarning('${fit.reason.replace(/'/g, "\\'")}')" class="w-full py-2 px-3 rounded-xl bg-rose-950/80 border border-rose-400/50 text-rose-200 font-bold text-xs">
                        Không vừa giỏ này
                      </button>`
               }
@@ -681,6 +982,9 @@
       renderProducts();
       renderCart();
       populateBoxEditDropdown();
+      if (!document.getElementById("productDetailModal").classList.contains("hidden")) {
+        refreshDetailModalState();
+      }
     }
 
     function populateBoxEditDropdown() {
@@ -704,10 +1008,32 @@
       document.getElementById("boxDescInput").value = box.desc || "";
     }
 
-    function fileToBase64(file) {
+    function compressImageToDataUrl(file, maxDim = 900, quality = 0.82) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
+        reader.onload = ev => {
+          const img = new Image();
+          img.onload = () => {
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = reject;
+          img.src = ev.target.result;
+        };
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
@@ -729,14 +1055,23 @@
         const height = Number(document.getElementById("apHeight").value || 10);
         const status = document.getElementById("apStatus").value;
         const desc = document.getElementById("apDesc").value.trim();
-        let image = document.getElementById("apImageUrl").value.trim() || FALLBACK_IMG;
 
-        let imageBase64 = "";
+        const urlList = document.getElementById("apImageUrl").value
+          .split(/[\n,|]+/)
+          .map(s => s.trim())
+          .filter(Boolean)
+          .slice(0, MAX_PRODUCT_IMAGES);
+
         const fileInput = document.getElementById("apImageFile");
-        if (fileInput.files && fileInput.files[0]) {
-          imageBase64 = await fileToBase64(fileInput.files[0]);
-          image = imageBase64;
+        const uploadedList = [];
+        if (fileInput.files && fileInput.files.length) {
+          const files = Array.from(fileInput.files).slice(0, MAX_PRODUCT_IMAGES);
+          for (const f of files) {
+            uploadedList.push(await compressImageToDataUrl(f));
+          }
         }
+
+        const finalImages = [...uploadedList, ...urlList].slice(0, MAX_PRODUCT_IMAGES);
 
         const newProd = {
           id: "XB" + Date.now().toString().slice(-5),
@@ -748,24 +1083,29 @@
           width,
           height,
           status,
-          image,
+          images: finalImages,
+          image: finalImages[0] || "",
           desc
         };
 
-        products.push(newProd);
+        products.unshift(newProd);
         renderProducts();
 
+        const httpImgs = finalImages.filter(u => String(u).startsWith("http"));
         if (XBANME_GAS_URL) {
           await fetch(XBANME_GAS_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ action: "addProduct", product: newProd, imageBase64 })
+            body: JSON.stringify({
+              action: "addProduct",
+              product: { ...newProd, image: httpImgs[0] || "", images: httpImgs }
+            })
           });
         }
 
         e.target.reset();
-        alert("Đã lưu & đăng sản phẩm mới lên Google Sheets!");
+        alert(`Đã lưu & đăng sản phẩm (${finalImages.length} ảnh)!`);
       } catch (err) {
         console.error(err);
         alert("Có lỗi khi lưu sản phẩm, anh kiểm tra lại nhé!");
@@ -922,7 +1262,7 @@
 
     async function syncFromSheet(showAlert = false) {
       if (!XBANME_GAS_URL) {
-        if (showAlert) alert("Chưa gắn link XBANME_GAS_URL. Đang dùng dữ liệu mẫu X-BAN MÊ.");
+        if (showAlert) alert("Chưa gắn link XBANME_GAS_URL.");
         return;
       }
       const icon = document.getElementById("syncIcon");
@@ -930,7 +1270,7 @@
       try {
         const res = await fetch(XBANME_GAS_URL + "?t=" + Date.now());
         const data = await res.json();
-        if (data && Array.isArray(data.products) && data.products.length) {
+        if (data && Array.isArray(data.products)) {
           products = data.products;
         }
         if (data && Array.isArray(data.boxes) && data.boxes.length) {
@@ -959,7 +1299,15 @@
     }
 
     renderAll();
-    syncFromSheet(false);
+
+    const params = new URLSearchParams(window.location.search);
+    const sharedSpId = params.get("sp");
+
+    syncFromSheet(false).then(() => {
+      if (sharedSpId) {
+        openProductDetail(sharedSpId);
+      }
+    });
   </script>
 </body>
 </html>
