@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HỘ KINH DOANH X-BAN MÊ • Phối Giỏ Quà Nông Sản Buôn Ma Thuột</title>
+  <title>HỘ KINH DOANH X-BAN MÊ • Phối Giỏ Quà & Mua Lẻ Nông Sản Buôn Ma Thuột</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -54,8 +54,8 @@
         </button>
 
         <button type="button" onclick="toggleCart(true)" class="relative px-3 py-1.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-xs flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-gift"></i>
-          <span>Giỏ quà</span>
+          <i class="fa-solid fa-basket-shopping"></i>
+          <span>Giỏ hàng</span>
           <span id="cartBadge" class="px-1.5 py-0.2 rounded-full bg-[#162919] text-[#d6ee9e] text-[10px] font-black">0</span>
         </button>
 
@@ -65,13 +65,13 @@
       </div>
     </div>
 
-    <!-- MAIN TABS -->
+    <!-- MAIN TABS (TÁCH RÕ 2 LUỒNG) -->
     <div class="max-w-5xl mx-auto px-3.5 pb-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
       <button type="button" onclick="switchTab('giftbox')" id="tab-giftbox" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-[#86a657] text-[#162919] shrink-0 transition">
-        <i class="fa-solid fa-box-open mr-1"></i>Phối Giỏ Quà
+        <i class="fa-solid fa-gift mr-1"></i>Phối Giỏ Quà
       </button>
       <button type="button" onclick="switchTab('store')" id="tab-store" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#213b25] text-[#d8ebb0] hover:bg-[#2b4c30] border border-[#3a6140] shrink-0 transition">
-        <i class="fa-solid fa-store mr-1"></i>Sản Phẩm X-BAN MÊ
+        <i class="fa-solid fa-bag-shopping mr-1"></i>Sản Phẩm X-BAN MÊ (Mua Lẻ)
       </button>
     </div>
   </header>
@@ -84,7 +84,7 @@
       <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#2b472f] pb-2.5">
         <div class="flex items-center gap-2">
           <span class="px-2 py-0.5 rounded bg-[#86a657] text-[#162919] text-[10px] font-extrabold uppercase">Admin X-BAN MÊ</span>
-          <span class="text-xs text-[#e3f0c8]">Đăng sản phẩm bằng link ảnh & kích thước cm, chỉnh giỏ quà, ẩn/hiện món</span>
+          <span class="text-xs text-[#e3f0c8]">Tải ảnh từ máy/điện thoại, sắp xếp thứ tự ảnh, chỉnh giỏ quà, ẩn/hiện món</span>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" onclick="syncFromSheet(true)" class="px-3 py-1.5 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] text-[#d8ebb0] text-xs font-bold">
@@ -99,7 +99,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
         <!-- FORM ĐĂNG SẢN PHẨM MỚI -->
         <form onsubmit="handleAddProduct(event)" class="bg-[#0f1d11] border border-[#2b472f] rounded-2xl p-3.5 space-y-2.5">
-          <h4 class="font-extrabold text-[#b8d97c] text-xs uppercase">1. Đăng sản phẩm mới (link ảnh + kích thước cm)</h4>
+          <h4 class="font-extrabold text-[#b8d97c] text-xs uppercase">1. Đăng sản phẩm mới (tải ảnh từ máy/điện thoại)</h4>
 
           <input type="text" id="apName" required placeholder="Tên sản phẩm (vd: Khô bò đặc sản 200g) *" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
 
@@ -121,18 +121,30 @@
             <input type="number" id="apHeight" required min="1" step="0.1" placeholder="Cao (cm) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
           </div>
 
+          <!-- BỘ CHỌN & SẮP XẾP ẢNH TỪ MÁY / ĐIỆN THOẠI -->
+          <div class="p-2.5 rounded-xl bg-[#162919] border border-dashed border-[#4d7553] space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <label for="apImageFile" class="cursor-pointer px-3 py-1.5 rounded-lg bg-[#2b4c30] hover:bg-[#355c3b] text-[#e3f0c8] font-bold text-[11px] inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-image text-[#c7e088]"></i>
+                <span>Chọn tối đa 6 ảnh từ máy/điện thoại</span>
+              </label>
+              <span id="draftImgCounter" class="text-[11px] font-bold text-[#c7e088]">Đã chọn 0/6 ảnh</span>
+            </div>
+            <input type="file" id="apImageFile" accept="image/*" multiple onchange="handleDraftImageFiles(event)" class="hidden" />
+
+            <div id="draftImageList" class="grid grid-cols-3 sm:grid-cols-6 gap-2"></div>
+          </div>
+
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" id="apImageUrl" placeholder="Dán link ảnh (tối đa 6 link, cách dấu phẩy)" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
             <select id="apStatus" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white">
               <option value="HIEN">Hiển thị (HIEN)</option>
               <option value="AN">Tạm ẩn (AN)</option>
             </select>
+            <input type="text" id="apDesc" placeholder="Mô tả ngắn sản phẩm" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
           </div>
 
-          <input type="text" id="apDesc" placeholder="Mô tả ngắn sản phẩm" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
-
           <button type="submit" id="btnAddProduct" class="w-full py-2.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold">
-            Lưu & Đăng Sản Phẩm
+            Lưu & Đồng Bộ Lên Google Sheets
           </button>
         </form>
 
@@ -157,26 +169,26 @@
           <button type="submit" class="w-full py-2.5 rounded-xl bg-[#c7e088] hover:bg-[#d5eb9d] text-[#162919] font-extrabold">
             Lưu Thông Tin Giỏ Quà
           </button>
-          <p class="text-[11px] text-[#c7dc9c]">Hệ thống tự động kiểm tra độ vừa vặn để xếp sản phẩm gọn gàng.</p>
+          <p class="text-[11px] text-[#c7dc9c]">Áp dụng riêng cho luồng Phối Giỏ Quà; luồng Sản Phẩm X-BAN MÊ luôn cho mua lẻ tự do.</p>
         </form>
       </div>
     </section>
 
     <!-- INFO BANNER -->
-    <section class="forest-card rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <section id="modeBanner" class="forest-card rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="space-y-0.5">
-        <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#86a657] text-[#162919] text-[10px] font-extrabold uppercase tracking-wide">
-          HỘ KINH DOANH X-BAN MÊ • BUÔN MA THUỘT
+        <span id="modeBadge" class="inline-block px-2.5 py-0.5 rounded-full bg-[#86a657] text-[#162919] text-[10px] font-extrabold uppercase tracking-wide">
+          LUỒNG 1 • PHỐI GIỎ QUÀ
         </span>
-        <h2 class="text-sm sm:text-base font-extrabold text-white pt-0.5">Tự phối giỏ quà nông sản — Tự động kiểm tra vừa giỏ</h2>
-        <p class="text-xs text-[#c7dc9c]">24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: 0838 346 346</p>
+        <h2 id="modeTitle" class="text-sm sm:text-base font-extrabold text-white pt-0.5">Tự phối giỏ quà nông sản — Tự động kiểm tra vừa giỏ</h2>
+        <p id="modeSubtitle" class="text-xs text-[#c7dc9c]">24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: 0838 346 346</p>
       </div>
       <a href="tel:0838346346" class="px-3.5 py-2 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] text-xs font-extrabold shrink-0 text-center transition">
         <i class="fa-solid fa-phone mr-1"></i>0838 346 346
       </a>
     </section>
 
-    <!-- GIFT BOX SELECTOR (3 GIỎ QUÀ CÓ SẴN) -->
+    <!-- LUỒNG 1: GIFT BOX SELECTOR (CHỈ HIỆN Ở TAB PHỐI GIỎ QUÀ) -->
     <section id="giftBoxSection" class="soft-panel rounded-2xl p-3.5 space-y-3">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
         <h3 class="text-xs sm:text-sm font-extrabold text-[#162919] flex items-center gap-1.5">
@@ -200,6 +212,19 @@
       <div id="fitWarningBox" class="hidden p-2.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-800 text-xs font-bold"></div>
     </section>
 
+    <!-- LUỒNG 2 BANNER: MUA LẺ TỪNG MÓN (CHỈ HIỆN Ở TAB SẢN PHẨM X-BAN MÊ) -->
+    <section id="retailInfoSection" class="hidden soft-panel rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div class="space-y-0.5">
+        <h3 class="text-xs sm:text-sm font-extrabold text-[#162919] flex items-center gap-1.5">
+          <i class="fa-solid fa-bag-shopping text-[#4b6b28]"></i>Mua lẻ từng sản phẩm X-BAN MÊ
+        </h3>
+        <p class="text-xs text-[#3f5830]">Chọn trực tiếp từng món theo số lượng mong muốn, không bị ràng buộc kích thước giỏ quà.</p>
+      </div>
+      <button type="button" onclick="toggleCart(true)" class="px-3 py-1.5 rounded-xl bg-[#162919] hover:bg-[#233f27] text-[#eef4d4] text-xs font-bold shrink-0">
+        Xem đơn mua lẻ (<span id="retailCountInline">0</span>)
+      </button>
+    </section>
+
     <!-- FILTER & SEARCH -->
     <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
       <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="categoryFilters">
@@ -217,14 +242,14 @@
       </div>
     </section>
 
-    <!-- PRODUCT GRID (ẢNH TO RỘNG, ÍT NÉN) -->
+    <!-- PRODUCT GRID -->
     <section id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></section>
 
     <!-- EMPTY STATE -->
     <section id="emptyState" class="hidden soft-panel rounded-2xl p-8 text-center space-y-2">
       <i class="fa-solid fa-box-open text-2xl text-[#4b6b28]"></i>
       <p class="text-sm font-bold text-[#162919]">Chưa có sản phẩm nào trong mục này</p>
-      <p class="text-xs text-[#4a613b]">Vui lòng đăng sản phẩm bằng link ảnh trong mục Admin.</p>
+      <p class="text-xs text-[#4a613b]">Vui lòng tải ảnh từ máy/điện thoại và đăng sản phẩm trong mục Admin.</p>
     </section>
 
   </main>
@@ -271,7 +296,7 @@
       </div>
 
       <div class="border-t border-[#2b472f] pt-3 space-y-1 text-[11px] text-[#9ab57c]">
-        <p>© 2026 Hộ Kinh Doanh X-Ban Mê • Website giới thiệu & phối giỏ quà nông sản Buôn Ma Thuột</p>
+        <p>© 2026 Hộ Kinh Doanh X-Ban Mê • Website giới thiệu, phối giỏ quà & bán lẻ nông sản Buôn Ma Thuột</p>
         <p>Hỗ trợ trực tiếp: 24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: 0838 346 346</p>
       </div>
     </div>
@@ -291,7 +316,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: CHI TIẾT SẢN PHẨM (TỐI ĐA 6 ẢNH) ==================== -->
+  <!-- ==================== MODAL: CHI TIẾT SẢN PHẨM ==================== -->
   <div id="productDetailModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3" onclick="if(event.target===this) closeModal('productDetailModal')">
     <div class="forest-card rounded-3xl max-w-xl w-full overflow-hidden text-xs shadow-2xl border-[#86a657]">
       <div class="flex items-center justify-between px-4 py-3 border-b border-[#2b472f] bg-[#0f1d11]">
@@ -311,12 +336,18 @@
 
       <div class="p-4 space-y-3.5 max-h-[85vh] overflow-y-auto">
         <div class="space-y-2.5">
-          <div id="detailMainWrap" class="w-full h-64 sm:h-72 rounded-2xl bg-[#f4f6f8] border border-[#2b472f] overflow-hidden flex items-center justify-center">
+          <div class="relative w-full h-64 sm:h-72 rounded-2xl bg-[#f4f6f8] border border-[#2b472f] overflow-hidden flex items-center justify-center">
             <img id="detailMainImg" src="" alt="" class="w-full h-full object-contain" />
             <div id="detailNoImgPlaceholder" class="hidden text-[#4a613b] text-xs font-semibold flex flex-col items-center gap-1.5">
               <i class="fa-regular fa-image text-2xl"></i>
               <span>Chưa có ảnh</span>
             </div>
+            <button type="button" id="detailPrevBtn" onclick="stepDetailImage(-1)" class="hidden absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#162919]/85 hover:bg-[#162919] text-white flex items-center justify-center shadow" aria-label="Ảnh trước">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <button type="button" id="detailNextBtn" onclick="stepDetailImage(1)" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#162919]/85 hover:bg-[#162919] text-white flex items-center justify-center shadow" aria-label="Ảnh sau">
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
           </div>
           <div id="detailThumbRow" class="grid grid-cols-6 gap-2"></div>
         </div>
@@ -350,8 +381,8 @@
             <button type="button" onclick="changeDetailQty(1)" class="w-7 h-7 rounded-lg bg-[#213b25] hover:bg-[#2b4c30] text-white font-black">+</button>
           </div>
 
-          <button type="button" id="detailAddBtn" onclick="addDetailToBox()" class="flex-1 py-2.5 px-4 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-black text-xs transition">
-            + Cho vào giỏ quà
+          <button type="button" id="detailAddBtn" onclick="addDetailByCurrentMode()" class="flex-1 py-2.5 px-4 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-black text-xs transition">
+            Thêm vào giỏ
           </button>
         </div>
       </div>
@@ -387,15 +418,15 @@
     </div>
   </div>
 
-  <!-- ==================== SLIDE-OVER: GIỎ QUÀ & ĐẶT ĐƠN ==================== -->
+  <!-- ==================== SLIDE-OVER: GIỎ HÀNG (TÁCH GIỎ QUÀ & MUA LẺ) ==================== -->
   <div id="cartDrawer" class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex justify-end">
     <div class="forest-card border-l border-[#2b472f] w-full max-w-md h-full flex flex-col justify-between p-4 text-xs shadow-2xl">
       <div class="flex items-center justify-between border-b border-[#2b472f] pb-3">
         <div>
           <h3 class="text-sm font-black text-white flex items-center gap-2">
-            <i class="fa-solid fa-gift text-[#86a657]"></i>GIỎ QUÀ X-BAN MÊ
+            <i class="fa-solid fa-basket-shopping text-[#86a657]"></i>GIỎ HÀNG X-BAN MÊ
           </h3>
-          <p id="drawerActiveBox" class="text-[11px] text-[#c7dc9c] mt-0.5"></p>
+          <p class="text-[11px] text-[#c7dc9c] mt-0.5">Tách riêng phần Phối Giỏ Quà và Mua Lẻ</p>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" id="btnClearCart" onclick="clearCart()" class="hidden px-2 py-1 rounded-lg bg-rose-900/70 hover:bg-rose-800 text-rose-100 text-[11px] font-bold">
@@ -405,17 +436,17 @@
         </div>
       </div>
 
-      <div id="cartItemsList" class="flex-1 overflow-y-auto py-3 space-y-2.5"></div>
+      <div id="cartItemsList" class="flex-1 overflow-y-auto py-3 space-y-3.5"></div>
 
       <form onsubmit="submitOrder(event)" class="border-t border-[#2b472f] pt-3 space-y-2.5">
         <div class="bg-[#0f1d11] p-3 rounded-2xl border border-[#2b472f] space-y-1">
           <div class="flex justify-between text-[#c7dc9c]">
-            <span>Giỏ quà đã chọn:</span>
-            <span id="cartBoxPrice" class="font-bold text-white">0đ</span>
+            <span>Phần Giỏ Quà (gồm vỏ giỏ + món trong giỏ):</span>
+            <span id="cartGiftBoxTotal" class="font-bold text-white">0đ</span>
           </div>
           <div class="flex justify-between text-[#c7dc9c]">
-            <span>Tiền sản phẩm trong giỏ:</span>
-            <span id="cartItemsPrice" class="font-bold text-white">0đ</span>
+            <span>Phần Mua Lẻ từng món:</span>
+            <span id="cartRetailTotal" class="font-bold text-white">0đ</span>
           </div>
           <div class="flex justify-between text-sm font-black text-white pt-1 border-t border-[#2b472f]">
             <span>Tổng thanh toán:</span>
@@ -431,7 +462,7 @@
         <input type="text" id="custAddress" required placeholder="Địa chỉ nhận hàng / lời nhắn *" class="w-full px-3 py-2 rounded-xl bg-[#0f1d11] border border-[#3a6140] text-white placeholder-[#8ca878]" />
 
         <button type="submit" id="btnSubmitOrder" class="w-full py-3 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-black text-xs uppercase tracking-wide">
-          Gửi Đơn Giỏ Quà
+          Gửi Đơn Hàng
         </button>
       </form>
     </div>
@@ -476,7 +507,9 @@
     const CLEARANCE_BUFFER_CM = 1.5;
     const PACKING_FACTOR = 0.78;
     const MAX_PRODUCT_IMAGES = 6;
-    const LOCAL_PRODUCTS_KEY = "xbanme_local_products_v1";
+    const LOCAL_PRODUCTS_KEY = "xbanme_local_products_v3";
+    const GIFT_BOX_ITEMS_KEY = "xbanme_box_items_v3";
+    const RETAIL_ITEMS_KEY = "xbanme_retail_items_v3";
 
     let giftBoxes = [
       { id: "BOX_1", name: "Giỏ Quà Nhỏ", length: 22, width: 15, height: 12, price: 25000, desc: "Phù hợp phối 1–2 món đặc sản gọn nhẹ" },
@@ -485,11 +518,13 @@
     ];
 
     let products = JSON.parse(localStorage.getItem(LOCAL_PRODUCTS_KEY) || "[]");
+    let draftImages = [];
 
     let currentTab = "giftbox";
     let currentCategory = "ALL";
     let selectedBoxId = giftBoxes[1].id;
-    let boxItems = JSON.parse(localStorage.getItem("xbanme_box_items") || "[]");
+    let boxItems = JSON.parse(localStorage.getItem(GIFT_BOX_ITEMS_KEY) || "[]");
+    let retailItems = JSON.parse(localStorage.getItem(RETAIL_ITEMS_KEY) || "[]");
     let isAdmin = sessionStorage.getItem("xbanme_admin") === "1";
     let activeDetailProductId = null;
     let activeDetailImgIndex = 0;
@@ -529,20 +564,6 @@
       document.getElementById("policyModal").classList.remove("hidden");
     }
 
-    function toDirectImageUrl(url) {
-      const s = String(url || "").trim();
-      if (!s) return "";
-      const driveFileMatch = s.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-      if (driveFileMatch && driveFileMatch[1]) {
-        return `https://lh3.googleusercontent.com/d/${driveFileMatch[1]}`;
-      }
-      const driveOpenMatch = s.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-      if (s.includes("drive.google.com") && driveOpenMatch && driveOpenMatch[1]) {
-        return `https://lh3.googleusercontent.com/d/${driveOpenMatch[1]}`;
-      }
-      return s;
-    }
-
     function getProductImages(prod) {
       if (!prod) return [];
       const sources = [
@@ -563,7 +584,99 @@
         }
       }
 
-      return Array.from(new Set(rawList.map(toDirectImageUrl).filter(Boolean))).slice(0, MAX_PRODUCT_IMAGES);
+      return rawList.map(s => String(s || "").trim()).filter(Boolean).slice(0, MAX_PRODUCT_IMAGES);
+    }
+
+    function compressImageToDataUrl(file, maxDim = 640, quality = 0.75) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          const img = new Image();
+          img.onload = () => {
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = reject;
+          img.src = ev.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleDraftImageFiles(e) {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+
+      const availableSlots = MAX_PRODUCT_IMAGES - draftImages.length;
+      if (availableSlots <= 0) {
+        alert(`Tối đa ${MAX_PRODUCT_IMAGES} ảnh cho mỗi sản phẩm.`);
+        e.target.value = "";
+        return;
+      }
+
+      const selected = files.slice(0, availableSlots);
+      for (const file of selected) {
+        const dataUrl = await compressImageToDataUrl(file);
+        draftImages.push(dataUrl);
+      }
+      e.target.value = "";
+      renderDraftImages();
+    }
+
+    function moveDraftImage(idx, delta) {
+      const targetIdx = idx + delta;
+      if (targetIdx < 0 || targetIdx >= draftImages.length) return;
+      const temp = draftImages[idx];
+      draftImages[idx] = draftImages[targetIdx];
+      draftImages[targetIdx] = temp;
+      renderDraftImages();
+    }
+
+    function removeDraftImage(idx) {
+      draftImages.splice(idx, 1);
+      renderDraftImages();
+    }
+
+    function renderDraftImages() {
+      document.getElementById("draftImgCounter").innerText = `Đã chọn ${draftImages.length}/${MAX_PRODUCT_IMAGES} ảnh`;
+      const container = document.getElementById("draftImageList");
+      if (!draftImages.length) {
+        container.innerHTML = `<p class="col-span-full text-[11px] text-[#8ca878]">Chưa có ảnh nào. Bấm nút bên trên để chọn ảnh từ điện thoại hoặc máy tính.</p>`;
+        return;
+      }
+
+      container.innerHTML = draftImages.map((src, idx) => `
+        <div class="relative rounded-xl overflow-hidden border border-[#3a6140] bg-[#0f1d11] p-1 space-y-1">
+          <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-[#162919]/90 text-[#c7e088] text-[10px] font-black">#${idx + 1}</span>
+          <button type="button" onclick="removeDraftImage(${idx})" class="absolute top-1.5 right-1.5 w-5 h-5 rounded bg-rose-600 text-white text-[10px] font-black flex items-center justify-center" title="Xóa ảnh">
+            ×
+          </button>
+          <img src="${src}" alt="Ảnh ${idx + 1}" class="w-full h-16 object-cover rounded-lg" />
+          <div class="grid grid-cols-2 gap-1">
+            <button type="button" onclick="moveDraftImage(${idx}, -1)" ${idx === 0 ? "disabled" : ""} class="py-0.5 rounded bg-[#213b25] hover:bg-[#2b4c30] disabled:opacity-35 text-white font-black text-[11px]" title="Chuyển lên trước">
+              &lt;
+            </button>
+            <button type="button" onclick="moveDraftImage(${idx}, 1)" ${idx === draftImages.length - 1 ? "disabled" : ""} class="py-0.5 rounded bg-[#213b25] hover:bg-[#2b4c30] disabled:opacity-35 text-white font-black text-[11px]" title="Chuyển ra sau">
+              &gt;
+            </button>
+          </div>
+        </div>
+      `).join("");
     }
 
     function saveLocalProducts() {
@@ -683,10 +796,14 @@
       const mainImg = document.getElementById("detailMainImg");
       const placeholder = document.getElementById("detailNoImgPlaceholder");
       const thumbRow = document.getElementById("detailThumbRow");
+      const prevBtn = document.getElementById("detailPrevBtn");
+      const nextBtn = document.getElementById("detailNextBtn");
 
       if (!imgs.length) {
         mainImg.classList.add("hidden");
         placeholder.classList.remove("hidden");
+        prevBtn.classList.add("hidden");
+        nextBtn.classList.add("hidden");
         thumbRow.innerHTML = "";
         document.getElementById("detailImgCount").innerText = `0/${MAX_PRODUCT_IMAGES} ảnh`;
         return;
@@ -696,9 +813,13 @@
       mainImg.classList.remove("hidden");
       if (activeDetailImgIndex >= imgs.length) activeDetailImgIndex = 0;
 
+      const hasMultiple = imgs.length > 1;
+      prevBtn.classList.toggle("hidden", !hasMultiple);
+      nextBtn.classList.toggle("hidden", !hasMultiple);
+
       mainImg.src = imgs[activeDetailImgIndex];
       mainImg.alt = prod.name;
-      document.getElementById("detailImgCount").innerText = `Ảnh ${activeDetailImgIndex + 1}/${imgs.length} (tối đa ${MAX_PRODUCT_IMAGES} ảnh)`;
+      document.getElementById("detailImgCount").innerText = `Ảnh ${activeDetailImgIndex + 1}/${imgs.length}`;
 
       thumbRow.innerHTML = imgs.map((src, idx) => {
         const active = idx === activeDetailImgIndex;
@@ -712,6 +833,15 @@
       }).join("");
     }
 
+    function stepDetailImage(delta) {
+      const prod = products.find(p => String(p.id) === String(activeDetailProductId));
+      if (!prod) return;
+      const imgs = getProductImages(prod);
+      if (!imgs.length) return;
+      activeDetailImgIndex = (activeDetailImgIndex + delta + imgs.length) % imgs.length;
+      renderDetailGallery(prod);
+    }
+
     function selectDetailImage(idx) {
       const prod = products.find(p => String(p.id) === String(activeDetailProductId));
       if (!prod) return;
@@ -723,12 +853,21 @@
       const prod = products.find(p => String(p.id) === String(activeDetailProductId));
       if (!prod) return;
 
-      const box = getActiveBox();
-      const fit = checkProductFitsBox(prod, box, detailQty, boxItems);
       const notice = document.getElementById("detailFitNotice");
       const addBtn = document.getElementById("detailAddBtn");
-
       document.getElementById("detailQty").innerText = detailQty;
+
+      if (currentTab === "store") {
+        notice.className = "p-2.5 rounded-xl bg-[#213b25] border border-[#3a6140] text-[#c7e088] text-[11px] font-bold";
+        notice.innerText = "✓ Luồng Mua Lẻ: Thêm trực tiếp sản phẩm lẻ vào đơn hàng, không cần chọn giỏ quà.";
+        addBtn.disabled = false;
+        addBtn.className = "flex-1 py-2.5 px-4 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-black text-xs transition";
+        addBtn.innerText = `Mua lẻ ${detailQty} món (${formatVND(prod.price * detailQty)})`;
+        return;
+      }
+
+      const box = getActiveBox();
+      const fit = checkProductFitsBox(prod, box, detailQty, boxItems);
 
       if (fit.ok) {
         notice.className = "p-2.5 rounded-xl bg-[#213b25] border border-[#3a6140] text-[#c7e088] text-[11px] font-bold";
@@ -752,10 +891,15 @@
       refreshDetailModalState();
     }
 
-    function addDetailToBox() {
+    function addDetailByCurrentMode() {
       const prod = products.find(p => String(p.id) === String(activeDetailProductId));
       if (!prod) return;
-      if (currentTab !== "giftbox") switchTab("giftbox");
+
+      if (currentTab === "store") {
+        addRetailItem(prod.id, detailQty);
+        closeModal("productDetailModal");
+        return;
+      }
 
       const check = checkProductFitsBox(prod, getActiveBox(), detailQty, boxItems);
       if (!check.ok) {
@@ -768,7 +912,7 @@
       if (idx >= 0) boxItems[idx].qty += detailQty;
       else boxItems.push({ product: prod, qty: detailQty });
 
-      saveBoxItems();
+      saveCartState();
       renderAll();
       closeModal("productDetailModal");
     }
@@ -829,6 +973,7 @@
       copyShareLink();
     }
 
+    // ==================== LUỒNG 1: PHỐI GIỎ QUÀ ====================
     function selectGiftBox(boxId) {
       const target = giftBoxes.find(b => b.id === boxId);
       if (!target) return;
@@ -842,10 +987,9 @@
       renderAll();
     }
 
-    function addToBox(prodId) {
+    function addToGiftBox(prodId) {
       const prod = products.find(p => String(p.id) === String(prodId));
       if (!prod) return;
-      if (currentTab !== "giftbox") switchTab("giftbox");
 
       const check = checkProductFitsBox(prod, getActiveBox(), 1, boxItems);
       if (!check.ok) {
@@ -858,7 +1002,7 @@
       if (idx >= 0) boxItems[idx].qty += 1;
       else boxItems.push({ product: prod, qty: 1 });
 
-      saveBoxItems();
+      saveCartState();
       renderAll();
     }
 
@@ -869,7 +1013,7 @@
       if (nextQty <= 0) {
         boxItems.splice(idx, 1);
         hideFitWarning();
-        saveBoxItems();
+        saveCartState();
         renderAll();
         return;
       }
@@ -882,26 +1026,56 @@
       }
       hideFitWarning();
       boxItems[idx].qty = nextQty;
-      saveBoxItems();
+      saveCartState();
       renderAll();
     }
 
     function removeBoxItem(prodId) {
       boxItems = boxItems.filter(it => String(it.product.id) !== String(prodId));
       hideFitWarning();
-      saveBoxItems();
+      saveCartState();
+      renderAll();
+    }
+
+    // ==================== LUỒNG 2: MUA LẺ TỪNG MÓN ====================
+    function addRetailItem(prodId, qty = 1) {
+      const prod = products.find(p => String(p.id) === String(prodId));
+      if (!prod) return;
+      const idx = retailItems.findIndex(it => String(it.product.id) === String(prod.id));
+      if (idx >= 0) retailItems[idx].qty += qty;
+      else retailItems.push({ product: prod, qty });
+
+      saveCartState();
+      renderAll();
+    }
+
+    function changeRetailQty(prodId, delta) {
+      const idx = retailItems.findIndex(it => String(it.product.id) === String(prodId));
+      if (idx === -1) return;
+      const nextQty = retailItems[idx].qty + delta;
+      if (nextQty <= 0) retailItems.splice(idx, 1);
+      else retailItems[idx].qty = nextQty;
+      saveCartState();
+      renderAll();
+    }
+
+    function removeRetailItem(prodId) {
+      retailItems = retailItems.filter(it => String(it.product.id) !== String(prodId));
+      saveCartState();
       renderAll();
     }
 
     function clearCart() {
       boxItems = [];
+      retailItems = [];
       hideFitWarning();
-      saveBoxItems();
+      saveCartState();
       renderAll();
     }
 
-    function saveBoxItems() {
-      localStorage.setItem("xbanme_box_items", JSON.stringify(boxItems));
+    function saveCartState() {
+      localStorage.setItem(GIFT_BOX_ITEMS_KEY, JSON.stringify(boxItems));
+      localStorage.setItem(RETAIL_ITEMS_KEY, JSON.stringify(retailItems));
     }
 
     function showFitWarning(msg) {
@@ -921,7 +1095,21 @@
       });
       const active = document.getElementById("tab-" + tab);
       if (active) active.className = "tab-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-[#86a657] text-[#162919] shrink-0 transition";
-      document.getElementById("giftBoxSection").classList.toggle("hidden", tab !== "giftbox");
+
+      const isGift = tab === "giftbox";
+      document.getElementById("giftBoxSection").classList.toggle("hidden", !isGift);
+      document.getElementById("retailInfoSection").classList.toggle("hidden", isGift);
+
+      if (isGift) {
+        document.getElementById("modeBadge").innerText = "LUỒNG 1 • PHỐI GIỎ QUÀ";
+        document.getElementById("modeTitle").innerText = "Tự phối giỏ quà nông sản — Tự động kiểm tra vừa giỏ";
+        document.getElementById("modeSubtitle").innerText = "24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: 0838 346 346";
+      } else {
+        document.getElementById("modeBadge").innerText = "LUỒNG 2 • SẢN PHẨM X-BAN MÊ (MUA LẺ)";
+        document.getElementById("modeTitle").innerText = "Mua lẻ từng sản phẩm đặc sản — Tự do chọn số lượng";
+        document.getElementById("modeSubtitle").innerText = "Không ép vào giỏ quà • Giao nhanh tại Buôn Ma Thuột & toàn quốc";
+      }
+
       renderProducts();
     }
 
@@ -956,15 +1144,17 @@
       }).join("");
 
       const box = getActiveBox();
-      const totalItems = boxItems.reduce((s, it) => s + it.qty, 0);
+      const giftQtyCount = boxItems.reduce((s, it) => s + it.qty, 0);
+      const retailQtyCount = retailItems.reduce((s, it) => s + it.qty, 0);
       const maxUsable = Math.max(1, getItemVolume(box) * PACKING_FACTOR);
       const pct = Math.min(100, Math.round((getUsedVolume(boxItems) / maxUsable) * 100));
 
-      document.getElementById("cartBadge").innerText = totalItems;
+      document.getElementById("cartBadge").innerText = giftQtyCount + retailQtyCount;
+      document.getElementById("retailCountInline").innerText = retailQtyCount;
       document.getElementById("activeBoxLabel").innerText = `${box.name} (${box.length}×${box.width}×${box.height} cm)`;
       document.getElementById("boxUsagePct").innerText = `${pct}%`;
       document.getElementById("boxUsageBar").style.width = `${pct}%`;
-      document.getElementById("boxFitStatusText").innerText = `Đang có ${totalItems} món`;
+      document.getElementById("boxFitStatusText").innerText = `Giỏ quà đang có ${giftQtyCount} món`;
     }
 
     function renderProducts() {
@@ -972,6 +1162,7 @@
       const empty = document.getElementById("emptyState");
       const kw = (document.getElementById("searchInput").value || "").toLowerCase().trim();
       const box = getActiveBox();
+      const isGiftMode = currentTab === "giftbox";
 
       const visible = products.filter(p => {
         const status = String(p.status || "HIEN").trim().toUpperCase();
@@ -990,12 +1181,41 @@
       empty.classList.add("hidden");
       grid.innerHTML = visible.map(p => {
         const isHidden = String(p.status || "").toUpperCase() === "AN";
-        const fit = checkProductFitsBox(p, box, 1, boxItems);
+        const fit = isGiftMode ? checkProductFitsBox(p, box, 1, boxItems) : { ok: true, reason: "" };
         const imgs = getProductImages(p);
         const coverImg = imgs[0] || "";
+        const retailEntry = retailItems.find(it => String(it.product.id) === String(p.id));
+
+        let actionButtonHtml = "";
+        if (isGiftMode) {
+          actionButtonHtml = fit.ok
+            ? `<button type="button" onclick="addToGiftBox('${p.id}')" class="w-full py-2 px-3 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-xs transition">
+                 + Cho vào giỏ quà
+               </button>`
+            : `<button type="button" onclick="showFitWarning('${fit.reason.replace(/'/g, "\\'")}')" class="w-full py-2 px-3 rounded-xl bg-rose-950/80 border border-rose-400/50 text-rose-200 font-bold text-xs">
+                 Không vừa giỏ này
+               </button>`;
+        } else if (retailEntry) {
+          actionButtonHtml = `
+            <div class="flex items-center justify-between gap-2 bg-[#0f1d11] border border-[#3a6140] rounded-xl px-2.5 py-1.5">
+              <span class="text-[11px] text-[#c7e088] font-bold">Đã chọn mua lẻ:</span>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="changeRetailQty('${p.id}', -1)" class="w-6 h-6 rounded-lg bg-[#213b25] hover:bg-[#2b4c30] text-white font-black">-</button>
+                <span class="w-5 text-center font-extrabold text-white">${retailEntry.qty}</span>
+                <button type="button" onclick="changeRetailQty('${p.id}', 1)" class="w-6 h-6 rounded-lg bg-[#213b25] hover:bg-[#2b4c30] text-white font-black">+</button>
+              </div>
+            </div>
+          `;
+        } else {
+          actionButtonHtml = `
+            <button type="button" onclick="addRetailItem('${p.id}', 1)" class="w-full py-2 px-3 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-xs transition">
+              Mua lẻ món này
+            </button>
+          `;
+        }
 
         return `
-          <article class="forest-card rounded-2xl overflow-hidden flex flex-col justify-between ${fit.ok ? "" : "opacity-75"}">
+          <article class="forest-card rounded-2xl overflow-hidden flex flex-col justify-between ${isGiftMode && !fit.ok ? "opacity-75" : ""}">
             <div>
               <div onclick="openProductDetail('${p.id}')" class="relative h-52 sm:h-56 bg-[#0f1d11] overflow-hidden cursor-pointer group flex items-center justify-center">
                 ${
@@ -1020,15 +1240,7 @@
                   Xem chi tiết
                 </button>
               </div>
-              ${
-                fit.ok
-                  ? `<button type="button" onclick="addToBox('${p.id}')" class="w-full py-2 px-3 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-xs transition">
-                       + Cho vào giỏ quà
-                     </button>`
-                  : `<button type="button" onclick="showFitWarning('${fit.reason.replace(/'/g, "\\'")}')" class="w-full py-2 px-3 rounded-xl bg-rose-950/80 border border-rose-400/50 text-rose-200 font-bold text-xs">
-                       Không vừa giỏ này
-                     </button>`
-              }
+              ${actionButtonHtml}
               ${
                 isAdmin
                   ? `<button type="button" onclick="toggleProductStatus('${p.id}', '${isHidden ? "HIEN" : "AN"}')" class="w-full py-1 rounded-lg bg-[#213b25] hover:bg-[#2b4c30] text-[10px] font-bold text-[#e3f0c8]">
@@ -1044,52 +1256,94 @@
 
     function renderCart() {
       const box = getActiveBox();
-      document.getElementById("drawerActiveBox").innerText = `${box.name} (${box.length}×${box.width}×${box.height} cm) • +${formatVND(box.price)}`;
-
+      const hasGiftItems = boxItems.length > 0;
+      const hasRetailItems = retailItems.length > 0;
       const list = document.getElementById("cartItemsList");
       const btnClear = document.getElementById("btnClearCart");
 
-      if (!boxItems.length) {
+      if (!hasGiftItems && !hasRetailItems) {
         btnClear.classList.add("hidden");
-        list.innerHTML = `<div class="text-center text-[#9ab57c] py-10">Chưa có sản phẩm nào trong giỏ quà.</div>`;
-        document.getElementById("cartBoxPrice").innerText = formatVND(box.price);
-        document.getElementById("cartItemsPrice").innerText = "0đ";
-        document.getElementById("cartTotal").innerText = formatVND(box.price);
+        list.innerHTML = `<div class="text-center text-[#9ab57c] py-10">Chưa có giỏ quà hoặc sản phẩm mua lẻ nào.</div>`;
+        document.getElementById("cartGiftBoxTotal").innerText = "0đ";
+        document.getElementById("cartRetailTotal").innerText = "0đ";
+        document.getElementById("cartTotal").innerText = "0đ";
         return;
       }
 
       btnClear.classList.remove("hidden");
-      let itemsSum = 0;
 
-      list.innerHTML = boxItems.map(it => {
-        itemsSum += it.product.price * it.qty;
-        return `
-          <div class="p-2.5 rounded-2xl bg-[#0f1d11] border border-[#2b472f] flex items-center justify-between gap-2">
-            <div class="min-w-0">
-              <p class="font-bold text-white truncate">${it.product.name}</p>
-              <p class="text-[11px] text-[#c7dc9c]">${it.product.length}×${it.product.width}×${it.product.height} cm • <span class="text-[#c7e088] font-bold">${formatVND(it.product.price)}</span></p>
+      let giftSum = 0;
+      let html = "";
+
+      if (hasGiftItems) {
+        const giftItemsSum = boxItems.reduce((s, it) => s + it.product.price * it.qty, 0);
+        giftSum = box.price + giftItemsSum;
+        html += `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between px-1">
+              <span class="text-[11px] font-extrabold text-[#c7e088] uppercase">1. Phần Giỏ Quà (${box.name})</span>
+              <span class="text-[11px] font-bold text-white">+${formatVND(box.price)} vỏ giỏ</span>
             </div>
-            <div class="flex items-center gap-1.5 shrink-0">
-              <button type="button" onclick="changeBoxQty('${it.product.id}', -1)" class="w-6 h-6 rounded-lg bg-[#213b25] text-white font-bold">-</button>
-              <span class="w-5 text-center font-extrabold">${it.qty}</span>
-              <button type="button" onclick="changeBoxQty('${it.product.id}', 1)" class="w-6 h-6 rounded-lg bg-[#213b25] text-white font-bold">+</button>
-              <button type="button" onclick="removeBoxItem('${it.product.id}')" class="w-6 h-6 rounded-lg bg-rose-900/70 text-rose-100 flex items-center justify-center">
-                <i class="fa-solid fa-trash-can text-[10px]"></i>
-              </button>
-            </div>
+            ${boxItems.map(it => `
+              <div class="p-2.5 rounded-2xl bg-[#0f1d11] border border-[#2b472f] flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <p class="font-bold text-white truncate">${it.product.name}</p>
+                  <p class="text-[11px] text-[#c7dc9c]"><span class="text-[#c7e088] font-bold">${formatVND(it.product.price)}</span> × ${it.qty}</p>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button type="button" onclick="changeBoxQty('${it.product.id}', -1)" class="w-6 h-6 rounded-lg bg-[#213b25] text-white font-bold">-</button>
+                  <span class="w-5 text-center font-extrabold">${it.qty}</span>
+                  <button type="button" onclick="changeBoxQty('${it.product.id}', 1)" class="w-6 h-6 rounded-lg bg-[#213b25] text-white font-bold">+</button>
+                  <button type="button" onclick="removeBoxItem('${it.product.id}')" class="w-6 h-6 rounded-lg bg-rose-900/70 text-rose-100 flex items-center justify-center">
+                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                  </button>
+                </div>
+              </div>
+            `).join("")}
           </div>
         `;
-      }).join("");
+      }
 
-      document.getElementById("cartBoxPrice").innerText = formatVND(box.price);
-      document.getElementById("cartItemsPrice").innerText = formatVND(itemsSum);
-      document.getElementById("cartTotal").innerText = formatVND(box.price + itemsSum);
+      let retailSum = 0;
+      if (hasRetailItems) {
+        retailSum = retailItems.reduce((s, it) => s + it.product.price * it.qty, 0);
+        html += `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between px-1">
+              <span class="text-[11px] font-extrabold text-[#c7e088] uppercase">2. Phần Mua Lẻ Từng Món</span>
+              <span class="text-[11px] font-bold text-white">${formatVND(retailSum)}</span>
+            </div>
+            ${retailItems.map(it => `
+              <div class="p-2.5 rounded-2xl bg-[#0f1d11] border border-[#3a6140] flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <p class="font-bold text-white truncate">${it.product.name}</p>
+                  <p class="text-[11px] text-[#c7dc9c]"><span class="text-[#c7e088] font-bold">${formatVND(it.product.price)}</span> × ${it.qty}</p>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button type="button" onclick="changeRetailQty('${it.product.id}', -1)" class="w-6 h-6 rounded-lg bg-[#213b25] text-white font-bold">-</button>
+                  <span class="w-5 text-center font-extrabold">${it.qty}</span>
+                  <button type="button" onclick="changeRetailQty('${it.product.id}', 1)" class="w-6 h-6 rounded-lg bg-[#213b25] text-white font-bold">+</button>
+                  <button type="button" onclick="removeRetailItem('${it.product.id}')" class="w-6 h-6 rounded-lg bg-rose-900/70 text-rose-100 flex items-center justify-center">
+                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                  </button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      list.innerHTML = html;
+      document.getElementById("cartGiftBoxTotal").innerText = formatVND(giftSum);
+      document.getElementById("cartRetailTotal").innerText = formatVND(retailSum);
+      document.getElementById("cartTotal").innerText = formatVND(giftSum + retailSum);
     }
 
     function renderAll() {
       renderGiftBoxes();
       renderProducts();
       renderCart();
+      renderDraftImages();
       populateBoxEditDropdown();
       if (!document.getElementById("productDetailModal").classList.contains("hidden")) {
         refreshDetailModalState();
@@ -1121,7 +1375,7 @@
       e.preventDefault();
       const btn = document.getElementById("btnAddProduct");
       btn.disabled = true;
-      btn.innerText = "Đang lưu sản phẩm...";
+      btn.innerText = "Đang lưu & đồng bộ...";
 
       try {
         const name = document.getElementById("apName").value.trim();
@@ -1134,11 +1388,7 @@
         const status = document.getElementById("apStatus").value;
         const desc = document.getElementById("apDesc").value.trim();
 
-        const finalImages = document.getElementById("apImageUrl").value
-          .split(/[\n,|]+/)
-          .map(s => toDirectImageUrl(s))
-          .filter(Boolean)
-          .slice(0, MAX_PRODUCT_IMAGES);
+        const finalImages = draftImages.slice(0, MAX_PRODUCT_IMAGES);
 
         const newProd = {
           id: "XB" + Date.now().toString().slice(-5),
@@ -1171,14 +1421,16 @@
           });
         }
 
+        draftImages = [];
+        renderDraftImages();
         e.target.reset();
-        alert(`Đã lưu & đăng sản phẩm (${finalImages.length} ảnh)!`);
+        alert(`Đã lưu sản phẩm (${finalImages.length} ảnh)!`);
       } catch (err) {
         console.error(err);
         alert("Có lỗi khi lưu sản phẩm, anh kiểm tra lại nhé!");
       } finally {
         btn.disabled = false;
-        btn.innerText = "Lưu & Đăng Sản Phẩm";
+        btn.innerText = "Lưu & Đồng Bộ Lên Google Sheets";
       }
     }
 
@@ -1240,7 +1492,9 @@
 
     async function submitOrder(e) {
       e.preventDefault();
-      if (!boxItems.length) return alert("Hãy chọn ít nhất 1 sản phẩm vào giỏ quà!");
+      if (!boxItems.length && !retailItems.length) {
+        return alert("Hãy chọn sản phẩm vào giỏ quà hoặc chọn mua lẻ ít nhất 1 món!");
+      }
 
       const name = document.getElementById("custName").value.trim();
       const phone = normalizePhone(document.getElementById("custPhone").value);
@@ -1253,9 +1507,21 @@
       try {
         const address = document.getElementById("custAddress").value.trim();
         const box = getActiveBox();
-        const itemsSum = boxItems.reduce((s, it) => s + it.product.price * it.qty, 0);
-        const total = box.price + itemsSum;
-        const itemsSummary = boxItems.map(it => `${it.product.name} x${it.qty}`).join(" | ");
+
+        const giftText = boxItems.length
+          ? `${box.name} (+${formatVND(box.price)}): ` + boxItems.map(it => `${it.product.name} x${it.qty}`).join(", ")
+          : "Không chọn giỏ quà";
+
+        const retailText = retailItems.length
+          ? "Mua lẻ: " + retailItems.map(it => `${it.product.name} x${it.qty}`).join(", ")
+          : "Không mua lẻ";
+
+        const giftSum = boxItems.length
+          ? box.price + boxItems.reduce((s, it) => s + it.product.price * it.qty, 0)
+          : 0;
+        const retailSum = retailItems.reduce((s, it) => s + it.product.price * it.qty, 0);
+        const total = giftSum + retailSum;
+        const itemsSummary = `${giftText} | ${retailText}`;
         const orderCode = "XB" + Date.now().toString().slice(-6);
 
         if (XBANME_GAS_URL) {
@@ -1271,8 +1537,8 @@
               tenKhach: name,
               customerPhone: phone,
               soDienThoai: phone,
-              boxName: `${box.name} (${box.length}x${box.width}x${box.height}cm)`,
-              gioQua: `${box.name} (${box.length}x${box.width}x${box.height}cm)`,
+              boxName: boxItems.length ? `${box.name} (${box.length}x${box.width}x${box.height}cm)` : "Chỉ mua lẻ",
+              gioQua: boxItems.length ? `${box.name} (${box.length}x${box.width}x${box.height}cm)` : "Chỉ mua lẻ",
               items: itemsSummary,
               danhSachMon: itemsSummary,
               totalAmount: total,
@@ -1284,7 +1550,7 @@
         }
 
         document.getElementById("orderSummaryText").innerHTML =
-          `Mã đơn <strong>#${orderCode}</strong> của <strong>${name}</strong> (${phone})<br/>Giỏ quà: <strong>${box.name}</strong><br/>Món: ${itemsSummary}<br/>Tổng: <strong class="text-[#c7e088]">${formatVND(total)}</strong>`;
+          `Mã đơn <strong>#${orderCode}</strong> của <strong>${name}</strong> (${phone})<br/><strong>${giftText}</strong><br/><strong>${retailText}</strong><br/>Tổng: <strong class="text-[#c7e088]">${formatVND(total)}</strong>`;
 
         clearCart();
         toggleCart(false);
@@ -1294,7 +1560,7 @@
         alert("Gửi đơn chưa thành công, anh vui lòng thử lại hoặc gọi Hotline 0838 346 346!");
       } finally {
         btn.disabled = false;
-        btn.innerText = "Gửi Đơn Giỏ Quà";
+        btn.innerText = "Gửi Đơn Hàng";
       }
     }
 
