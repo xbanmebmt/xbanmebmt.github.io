@@ -334,8 +334,8 @@
 
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
-    // Dán URL Web App của Google Apps Script (X-BAN MÊ) vào đây
-    const XBANME_GAS_URL = "";
+    // URL Web App của Google Apps Script (X-BAN MÊ)
+    const XBANME_GAS_URL = "https://script.google.com/macros/s/AKfycbz1963L4fdLMD3msUBb5xteMHf6b7BdAaZN0gvTGBam-xUd2L9BFk0A60iGZLr5ENX7-Q/exec";
     const ADMIN_PIN = "204201504042019";
     const SHOP_HOTLINE = "0838346346";
     const CLEARANCE_BUFFER_CM = 1.5; // Luôn chừa dư +1.5 cm
@@ -715,56 +715,64 @@
 
     async function handleAddProduct(e) {
       e.preventDefault();
-      const name = document.getElementById("apName").value.trim();
-      const category = document.getElementById("apCategory").value;
-      const netWeight = document.getElementById("apNetWeight").value.trim();
-      const price = Number(document.getElementById("apPrice").value || 0);
-      const length = Number(document.getElementById("apLength").value || 10);
-      const width = Number(document.getElementById("apWidth").value || 10);
-      const height = Number(document.getElementById("apHeight").value || 10);
-      const status = document.getElementById("apStatus").value;
-      const desc = document.getElementById("apDesc").value.trim();
-      let image = document.getElementById("apImageUrl").value.trim() || FALLBACK_IMG;
+      const btn = document.getElementById("btnAddProduct");
+      btn.disabled = true;
+      btn.innerText = "Đang lưu sản phẩm...";
 
-      let imageBase64 = "";
-      const fileInput = document.getElementById("apImageFile");
-      if (fileInput.files && fileInput.files[0]) {
-        imageBase64 = await fileToBase64(fileInput.files[0]);
-        image = imageBase64;
-      }
+      try {
+        const name = document.getElementById("apName").value.trim();
+        const category = document.getElementById("apCategory").value;
+        const netWeight = document.getElementById("apNetWeight").value.trim();
+        const price = Number(document.getElementById("apPrice").value || 0);
+        const length = Number(document.getElementById("apLength").value || 10);
+        const width = Number(document.getElementById("apWidth").value || 10);
+        const height = Number(document.getElementById("apHeight").value || 10);
+        const status = document.getElementById("apStatus").value;
+        const desc = document.getElementById("apDesc").value.trim();
+        let image = document.getElementById("apImageUrl").value.trim() || FALLBACK_IMG;
 
-      const newProd = {
-        id: "XB" + Date.now().toString().slice(-5),
-        name,
-        category,
-        netWeight,
-        price,
-        length,
-        width,
-        height,
-        status,
-        image,
-        desc
-      };
+        let imageBase64 = "";
+        const fileInput = document.getElementById("apImageFile");
+        if (fileInput.files && fileInput.files[0]) {
+          imageBase64 = await fileToBase64(fileInput.files[0]);
+          image = imageBase64;
+        }
 
-      products.push(newProd);
-      renderProducts();
+        const newProd = {
+          id: "XB" + Date.now().toString().slice(-5),
+          name,
+          category,
+          netWeight,
+          price,
+          length,
+          width,
+          height,
+          status,
+          image,
+          desc
+        };
 
-      if (XBANME_GAS_URL) {
-        try {
+        products.push(newProd);
+        renderProducts();
+
+        if (XBANME_GAS_URL) {
           await fetch(XBANME_GAS_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({ action: "addProduct", product: newProd, imageBase64 })
           });
-        } catch (err) {
-          console.error(err);
         }
-      }
 
-      e.target.reset();
-      alert("Đã thêm sản phẩm mới!");
+        e.target.reset();
+        alert("Đã lưu & đăng sản phẩm mới lên Google Sheets!");
+      } catch (err) {
+        console.error(err);
+        alert("Có lỗi khi lưu sản phẩm, anh kiểm tra lại nhé!");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Lưu & Đăng Sản Phẩm";
+      }
     }
 
     async function handleSaveBox(e) {
@@ -796,7 +804,7 @@
         }
       }
 
-      alert("Đã cập nhật giỏ quà!");
+      alert("Đã cập nhật thông tin giỏ quà lên Google Sheets!");
     }
 
     async function toggleProductStatus(prodId, nextStatus) {
@@ -830,15 +838,19 @@
       const phone = normalizePhone(document.getElementById("custPhone").value);
       if (phone.length !== 10) return alert("Vui lòng nhập số điện thoại 10 số hợp lệ.");
 
-      const address = document.getElementById("custAddress").value.trim();
-      const box = getActiveBox();
-      const itemsSum = boxItems.reduce((s, it) => s + it.product.price * it.qty, 0);
-      const total = box.price + itemsSum;
-      const itemsSummary = boxItems.map(it => `${it.product.name} x${it.qty}`).join(" | ");
-      const orderCode = "XB" + Date.now().toString().slice(-6);
+      const btn = document.getElementById("btnSubmitOrder");
+      btn.disabled = true;
+      btn.innerText = "Đang gửi đơn hàng...";
 
-      if (XBANME_GAS_URL) {
-        try {
+      try {
+        const address = document.getElementById("custAddress").value.trim();
+        const box = getActiveBox();
+        const itemsSum = boxItems.reduce((s, it) => s + it.product.price * it.qty, 0);
+        const total = box.price + itemsSum;
+        const itemsSummary = boxItems.map(it => `${it.product.name} x${it.qty}`).join(" | ");
+        const orderCode = "XB" + Date.now().toString().slice(-6);
+
+        if (XBANME_GAS_URL) {
           await fetch(XBANME_GAS_URL, {
             method: "POST",
             mode: "no-cors",
@@ -846,25 +858,36 @@
             body: JSON.stringify({
               action: "createOrder",
               orderCode,
+              maDon: orderCode,
               customerName: name,
+              tenKhach: name,
               customerPhone: phone,
-              boxName: box.name,
+              soDienThoai: phone,
+              boxName: `${box.name} (${box.length}x${box.width}x${box.height}cm)`,
+              gioQua: `${box.name} (${box.length}x${box.width}x${box.height}cm)`,
               items: itemsSummary,
+              danhSachMon: itemsSummary,
               totalAmount: total,
-              address
+              tongTien: total,
+              address,
+              diaChi: address
             })
           });
-        } catch (err) {
-          console.error(err);
         }
+
+        document.getElementById("orderSummaryText").innerHTML =
+          `Mã đơn <strong>#${orderCode}</strong> của <strong>${name}</strong> (${phone})<br/>Giỏ quà: <strong>${box.name}</strong><br/>Món: ${itemsSummary}<br/>Tổng: <strong class="text-[#c7e088]">${formatVND(total)}</strong>`;
+
+        clearCart();
+        toggleCart(false);
+        document.getElementById("orderSuccessModal").classList.remove("hidden");
+      } catch (err) {
+        console.error(err);
+        alert("Gửi đơn chưa thành công, anh vui lòng thử lại hoặc gọi Hotline 0838 346 346!");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Gửi Đơn Giỏ Quà";
       }
-
-      document.getElementById("orderSummaryText").innerHTML =
-        `Mã đơn <strong>#${orderCode}</strong> của <strong>${name}</strong> (${phone})<br/>Giỏ quà: <strong>${box.name}</strong><br/>Món: ${itemsSummary}<br/>Tổng: <strong class="text-[#c7e088]">${formatVND(total)}</strong>`;
-
-      clearCart();
-      toggleCart(false);
-      document.getElementById("orderSuccessModal").classList.remove("hidden");
     }
 
     function openAdminModal() {
