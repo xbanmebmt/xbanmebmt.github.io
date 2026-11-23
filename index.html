@@ -501,15 +501,15 @@
 
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
-    const XBANME_GAS_URL = "https://script.google.com/macros/s/AKfycbzM3jA91CViihNnkHs6ruvm0mctlvHPvuBfbDZ4BVYFlStqUjVmXi7yg4j-Q8cyHpzrHQ/exec";
+    const XBANME_GAS_URL = "https://script.google.com/macros/s/AKfycbw3zIgnDSxgRev1MBQexGUR7XwDG5GIOYN-lsB6g2imRPDjC29WEij80tzdETfhVwxK_A/exec";
     const ADMIN_PIN = "204201504042019";
     const SHOP_HOTLINE = "0838346346";
     const CLEARANCE_BUFFER_CM = 1.5;
     const PACKING_FACTOR = 0.78;
     const MAX_PRODUCT_IMAGES = 6;
-    const LOCAL_PRODUCTS_KEY = "xbanme_local_products_v3";
-    const GIFT_BOX_ITEMS_KEY = "xbanme_box_items_v3";
-    const RETAIL_ITEMS_KEY = "xbanme_retail_items_v3";
+    const LOCAL_PRODUCTS_KEY = "xbanme_local_products_v4";
+    const GIFT_BOX_ITEMS_KEY = "xbanme_box_items_v4";
+    const RETAIL_ITEMS_KEY = "xbanme_retail_items_v4";
 
     let giftBoxes = [
       { id: "BOX_1", name: "Giỏ Quà Nhỏ", length: 22, width: 15, height: 12, price: 25000, desc: "Phù hợp phối 1–2 món đặc sản gọn nhẹ" },
@@ -587,7 +587,7 @@
       return rawList.map(s => String(s || "").trim()).filter(Boolean).slice(0, MAX_PRODUCT_IMAGES);
     }
 
-    function compressImageToDataUrl(file, maxDim = 640, quality = 0.75) {
+    function compressImageToDataUrl(file, maxDim = 480, quality = 0.62) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = ev => {
@@ -1371,6 +1371,16 @@
       document.getElementById("boxDescInput").value = box.desc || "";
     }
 
+    async function postToGas(payload) {
+      if (!XBANME_GAS_URL) return;
+      await fetch(XBANME_GAS_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+    }
+
     async function handleAddProduct(e) {
       e.preventDefault();
       const btn = document.getElementById("btnAddProduct");
@@ -1389,9 +1399,10 @@
         const desc = document.getElementById("apDesc").value.trim();
 
         const finalImages = draftImages.slice(0, MAX_PRODUCT_IMAGES);
+        const prodId = "XB" + Date.now().toString().slice(-5);
 
         const newProd = {
-          id: "XB" + Date.now().toString().slice(-5),
+          id: prodId,
           name,
           category,
           netWeight,
@@ -1409,17 +1420,22 @@
         saveLocalProducts();
         renderProducts();
 
-        if (XBANME_GAS_URL) {
-          await fetch(XBANME_GAS_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              action: "addProduct",
-              product: newProd
-            })
-          });
-        }
+        await postToGas({
+          action: "addProduct",
+          id: prodId,
+          name,
+          category,
+          netWeight,
+          price,
+          length,
+          width,
+          height,
+          status,
+          images: finalImages,
+          image: finalImages[0] || "",
+          desc,
+          product: newProd
+        });
 
         draftImages = [];
         renderDraftImages();
@@ -1450,17 +1466,10 @@
       giftBoxes = giftBoxes.map(b => b.id === id ? updatedBox : b);
       renderAll();
 
-      if (XBANME_GAS_URL) {
-        try {
-          await fetch(XBANME_GAS_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ action: "saveBox", box: updatedBox })
-          });
-        } catch (err) {
-          console.error(err);
-        }
+      try {
+        await postToGas({ action: "saveBox", box: updatedBox });
+      } catch (err) {
+        console.error(err);
       }
 
       alert("Đã cập nhật thông tin giỏ quà lên Google Sheets!");
@@ -1471,17 +1480,10 @@
       saveLocalProducts();
       renderProducts();
 
-      if (XBANME_GAS_URL) {
-        try {
-          await fetch(XBANME_GAS_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ action: "updateProductStatus", id: prodId, status: nextStatus })
-          });
-        } catch (err) {
-          console.error(err);
-        }
+      try {
+        await postToGas({ action: "updateProductStatus", id: prodId, status: nextStatus });
+      } catch (err) {
+        console.error(err);
       }
     }
 
@@ -1524,30 +1526,23 @@
         const itemsSummary = `${giftText} | ${retailText}`;
         const orderCode = "XB" + Date.now().toString().slice(-6);
 
-        if (XBANME_GAS_URL) {
-          await fetch(XBANME_GAS_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              action: "createOrder",
-              orderCode,
-              maDon: orderCode,
-              customerName: name,
-              tenKhach: name,
-              customerPhone: phone,
-              soDienThoai: phone,
-              boxName: boxItems.length ? `${box.name} (${box.length}x${box.width}x${box.height}cm)` : "Chỉ mua lẻ",
-              gioQua: boxItems.length ? `${box.name} (${box.length}x${box.width}x${box.height}cm)` : "Chỉ mua lẻ",
-              items: itemsSummary,
-              danhSachMon: itemsSummary,
-              totalAmount: total,
-              tongTien: total,
-              address,
-              diaChi: address
-            })
-          });
-        }
+        await postToGas({
+          action: "createOrder",
+          orderCode,
+          maDon: orderCode,
+          customerName: name,
+          tenKhach: name,
+          customerPhone: phone,
+          soDienThoai: phone,
+          boxName: boxItems.length ? `${box.name} (${box.length}x${box.width}x${box.height}cm)` : "Chỉ mua lẻ",
+          gioQua: boxItems.length ? `${box.name} (${box.length}x${box.width}x${box.height}cm)` : "Chỉ mua lẻ",
+          items: itemsSummary,
+          danhSachMon: itemsSummary,
+          totalAmount: total,
+          tongTien: total,
+          address,
+          diaChi: address
+        });
 
         document.getElementById("orderSummaryText").innerHTML =
           `Mã đơn <strong>#${orderCode}</strong> của <strong>${name}</strong> (${phone})<br/><strong>${giftText}</strong><br/><strong>${retailText}</strong><br/>Tổng: <strong class="text-[#c7e088]">${formatVND(total)}</strong>`;
