@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HỘ KINH DOANH X-BAN MÊ • Phối Giỏ Quà Nông Sản Buôn Ma Thuột</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap');
+    body {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background-color: #eef4d4;
+      color: #162919;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .forest-card {
+      background-color: #162919;
+      border: 1px solid #2b472f;
+      color: #f4f8eb;
+    }
+    .soft-panel {
+      background-color: #f8faee;
+      border: 1px solid #c9d9a4;
+      color: #162919;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-[#86a657] selection:text-[#162919]">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="sticky top-0 z-40 bg-[#162919]/95 backdrop-blur-md border-b border-[#2b472f] text-[#f4f8eb]">
+    <div class="max-w-5xl mx-auto px-3.5 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 rounded-xl bg-[#86a657] flex items-center justify-center text-[#162919] font-black text-sm shrink-0">
+          XB
+        </div>
+        <div class="truncate">
+          <h1 class="text-sm sm:text-base font-black tracking-tight text-white truncate">HỘ KINH DOANH X-BAN MÊ</h1>
+          <p class="text-[11px] text-[#c7dc9c] truncate">24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: 0838 346 346</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button onclick="syncFromSheet(true)" id="btnSync" class="p-2 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] border border-[#3a6140] text-[#d8ebb0] text-xs transition" title="Đồng bộ dữ liệu">
+          <i class="fa-solid fa-rotate" id="syncIcon"></i>
+        </button>
+
+        <button onclick="toggleCart(true)" class="relative px-3 py-1.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-xs flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-gift"></i>
+          <span>Giỏ quà</span>
+          <span id="cartBadge" class="px-1.5 py-0.2 rounded-full bg-[#162919] text-[#d6ee9e] text-[10px] font-black">0</span>
+        </button>
+
+        <button onclick="openAdminModal()" id="btnAdmin" class="p-2 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] border border-[#3a6140] text-[#c7dc9c] hover:text-white text-xs transition" title="Quản trị Admin">
+          <i class="fa-solid fa-lock" id="adminLockIcon"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN TABS -->
+    <div class="max-w-5xl mx-auto px-3.5 pb-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('giftbox')" id="tab-giftbox" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-[#86a657] text-[#162919] shrink-0 transition">
+        <i class="fa-solid fa-box-open mr-1"></i>Phối Giỏ Quà
+      </button>
+      <button onclick="switchTab('store')" id="tab-store" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#213b25] text-[#d8ebb0] hover:bg-[#2b4c30] border border-[#3a6140] shrink-0 transition">
+        <i class="fa-solid fa-store mr-1"></i>Sản Phẩm X-BAN MÊ
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-3.5 py-4 space-y-4">
+
+    <!-- ADMIN PANEL -->
+    <section id="adminPanel" class="hidden forest-card rounded-2xl p-4 border-[#86a657] space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#2b472f] pb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded bg-[#86a657] text-[#162919] text-[10px] font-extrabold uppercase">Admin X-BAN MÊ</span>
+          <span class="text-xs text-[#e3f0c8]">Đăng sản phẩm kèm kích thước (cm), chỉnh giỏ quà, ẩn/hiện món</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="syncFromSheet(true)" class="px-3 py-1.5 rounded-xl bg-[#213b25] hover:bg-[#2b4c30] text-[#d8ebb0] text-xs font-bold">
+            <i class="fa-solid fa-rotate mr-1"></i>Tải lại Sheet
+          </button>
+          <button onclick="logoutAdmin()" class="px-2.5 py-1.5 rounded-xl bg-rose-900/70 hover:bg-rose-800 text-rose-100 text-xs font-bold">
+            Thoát Admin
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
+        <!-- FORM ĐĂNG SẢN PHẨM MỚI -->
+        <form onsubmit="handleAddProduct(event)" class="bg-[#0f1d11] border border-[#2b472f] rounded-2xl p-3.5 space-y-2.5">
+          <h4 class="font-extrabold text-[#b8d97c] text-xs uppercase">1. Đăng sản phẩm mới (kèm kích thước cm)</h4>
+
+          <input type="text" id="apName" required placeholder="Tên sản phẩm (vd: Cà phê Robusta rang 250g) *" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+
+          <div class="grid grid-cols-2 gap-2">
+            <select id="apCategory" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white">
+              <option value="Cà phê rang">Cà phê rang</option>
+              <option value="Trái cây sấy">Trái cây sấy</option>
+              <option value="Hạt dinh dưỡng">Hạt dinh dưỡng</option>
+              <option value="Đặc sản khác">Đặc sản khác</option>
+            </select>
+            <input type="text" id="apNetWeight" placeholder="Khối lượng tịnh (vd: 250g)" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+          </div>
+
+          <div class="grid grid-cols-4 gap-2">
+            <input type="number" id="apPrice" required min="0" placeholder="Giá (đ) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+            <input type="number" id="apLength" required min="1" step="0.1" placeholder="Dài (cm) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+            <input type="number" id="apWidth" required min="1" step="0.1" placeholder="Rộng (cm) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+            <input type="number" id="apHeight" required min="1" step="0.1" placeholder="Cao (cm) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" id="apImageUrl" placeholder="Link ảnh hoặc chọn file bên dưới" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+            <select id="apStatus" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white">
+              <option value="HIEN">Hiển thị (HIEN)</option>
+              <option value="AN">Tạm ẩn (AN)</option>
+            </select>
+          </div>
+
+          <input type="file" id="apImageFile" accept="image/*" class="w-full text-[11px] text-[#c7dc9c] file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#86a657] file:text-[#162919] file:font-bold" />
+
+          <input type="text" id="apDesc" placeholder="Mô tả ngắn sản phẩm" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+
+          <button type="submit" id="btnAddProduct" class="w-full py-2.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold">
+            Lưu & Đăng Sản Phẩm
+          </button>
+        </form>
+
+        <!-- FORM THÊM / SỬA GIỎ QUÀ -->
+        <form onsubmit="handleSaveBox(event)" class="bg-[#0f1d11] border border-[#2b472f] rounded-2xl p-3.5 space-y-2.5">
+          <h4 class="font-extrabold text-[#b8d97c] text-xs uppercase">2. Thêm / Cập nhật giỏ quà (3 giỏ có sẵn)</h4>
+
+          <div class="grid grid-cols-2 gap-2">
+            <select id="boxSelectEdit" onchange="fillBoxForm()" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white"></select>
+            <input type="text" id="boxNameInput" required placeholder="Tên giỏ quà *" class="px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+          </div>
+
+          <div class="grid grid-cols-4 gap-2">
+            <input type="number" id="boxLengthInput" required min="1" step="0.1" placeholder="Dài (cm) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+            <input type="number" id="boxWidthInput" required min="1" step="0.1" placeholder="Rộng (cm) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+            <input type="number" id="boxHeightInput" required min="1" step="0.1" placeholder="Cao (cm) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+            <input type="number" id="boxPriceInput" required min="0" placeholder="Giá giỏ (đ) *" class="px-2.5 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+          </div>
+
+          <input type="text" id="boxDescInput" placeholder="Ghi chú giỏ quà" class="w-full px-3 py-2 rounded-xl bg-[#162919] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-[#c7e088] hover:bg-[#d5eb9d] text-[#162919] font-extrabold">
+            Lưu Thông Tin Giỏ Quà
+          </button>
+          <p class="text-[11px] text-[#c7dc9c]">Hệ thống luôn tự động chừa dư <strong class="text-white">+1.5 cm</strong> để xếp sản phẩm rộng rãi, không cấn.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- INFO BANNER -->
+    <section class="forest-card rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="space-y-0.5">
+        <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#86a657] text-[#162919] text-[10px] font-extrabold uppercase tracking-wide">
+          HỘ KINH DOANH X-BAN MÊ • BUÔN MA THUỘT
+        </span>
+        <h2 class="text-sm sm:text-base font-extrabold text-white pt-0.5">Tự phối giỏ quà nông sản — Tự động kiểm tra vừa giỏ (+1.5 cm)</h2>
+        <p class="text-xs text-[#c7dc9c]">24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: 0838 346 346</p>
+      </div>
+      <a href="tel:0838346346" class="px-3.5 py-2 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] text-xs font-extrabold shrink-0 text-center transition">
+        <i class="fa-solid fa-phone mr-1"></i>0838 346 346
+      </a>
+    </section>
+
+    <!-- GIFT BOX SELECTOR (3 GIỎ QUÀ CÓ SẴN) -->
+    <section id="giftBoxSection" class="soft-panel rounded-2xl p-3.5 space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+        <h3 class="text-xs sm:text-sm font-extrabold text-[#162919] flex items-center gap-1.5">
+          <i class="fa-solid fa-gift text-[#4b6b28]"></i>Chọn 1 trong 3 giỏ quà có sẵn (chừa dư +1.5 cm rộng rãi)
+        </h3>
+        <span id="boxFitStatusText" class="text-[11px] font-bold text-[#3b5d1c]"></span>
+      </div>
+
+      <div id="giftBoxGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5"></div>
+
+      <div class="forest-card rounded-xl p-2.5 space-y-1.5">
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="text-[#d8ebb0]">Mức chiếm chỗ trong giỏ (<strong id="activeBoxLabel" class="text-white"></strong>):</span>
+          <span id="boxUsagePct" class="font-extrabold text-[#c7e088]">0%</span>
+        </div>
+        <div class="w-full h-2 rounded-full bg-[#244028] overflow-hidden">
+          <div id="boxUsageBar" class="h-full bg-[#86a657] transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div id="fitWarningBox" class="hidden p-2.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-800 text-xs font-bold"></div>
+    </section>
+
+    <!-- FILTER & SEARCH -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="categoryFilters">
+        <button onclick="setCategory('ALL')" data-cat="ALL" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-[#162919] text-[#eef4d4] shrink-0">Tất cả</button>
+        <button onclick="setCategory('Cà phê rang')" data-cat="Cà phê rang" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Cà phê rang</button>
+        <button onclick="setCategory('Trái cây sấy')" data-cat="Trái cây sấy" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Trái cây sấy</button>
+        <button onclick="setCategory('Hạt dinh dưỡng')" data-cat="Hạt dinh dưỡng" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Hạt dinh dưỡng</button>
+        <button onclick="setCategory('Đặc sản khác')" data-cat="Đặc sản khác" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0">Đặc sản khác</button>
+      </div>
+
+      <div class="relative w-full sm:w-64">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#547044] text-xs"></i>
+        <input type="text" id="searchInput" oninput="renderProducts()" placeholder="Tìm sản phẩm X-BAN MÊ..." class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#f8faee] border border-[#c2d49b] text-xs text-[#162919] placeholder-[#6c835c] focus:outline-none focus:border-[#162919]" />
+      </div>
+    </section>
+
+    <!-- PRODUCT GRID -->
+    <section id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></section>
+
+    <!-- EMPTY STATE -->
+    <section id="emptyState" class="hidden soft-panel rounded-2xl p-8 text-center space-y-2">
+      <i class="fa-solid fa-box-open text-2xl text-[#4b6b28]"></i>
+      <p class="text-sm font-bold text-[#162919]">Chưa có sản phẩm trong mục này</p>
+      <p class="text-xs text-[#4a613b]">Liên hệ Hotline 0838 346 346 hoặc bấm Đồng bộ để tải dữ liệu từ Google Sheets.</p>
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-[#2b472f] bg-[#162919] py-6 px-3.5 text-[11px] text-[#c7dc9c] mt-8">
+    <div class="max-w-5xl mx-auto space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-3 border-b border-[#2b472f]">
+        <div class="space-y-1">
+          <p class="text-xs font-black text-white tracking-tight">HỘ KINH DOANH X-BAN MÊ</p>
+          <p class="text-[#e3f0c8]">
+            <i class="fa-solid fa-location-dot text-[#86a657] mr-1.5"></i>24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk
+          </p>
+          <p>
+            <i class="fa-solid fa-phone text-[#86a657] mr-1.5"></i>Hotline: <a href="tel:0838346346" class="text-[#c7e088] font-extrabold hover:underline">0838 346 346</a>
+          </p>
+        </div>
+
+        <div class="space-y-1 sm:text-right">
+          <p class="text-xs font-bold text-white">Phối Giỏ Quà & Đặt Hàng</p>
+          <p>Tự động kiểm tra kích thước & chừa dư +1.5 cm rộng rãi</p>
+          <p>Hỗ trợ đặt nhanh qua Hotline 0838 346 346</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] text-[#9ab57c]">
+        <span>© 2026 HỘ KINH DOANH X-BAN MÊ • 24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk</span>
+        <span>Hotline: 0838 346 346</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== SLIDE-OVER: GIỎ QUÀ & ĐẶT ĐƠN ==================== -->
+  <div id="cartDrawer" class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex justify-end">
+    <div class="forest-card border-l border-[#2b472f] w-full max-w-md h-full flex flex-col justify-between p-4 text-xs shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#2b472f] pb-3">
+        <div>
+          <h3 class="text-sm font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-gift text-[#86a657]"></i>GIỎ QUÀ X-BAN MÊ
+          </h3>
+          <p id="drawerActiveBox" class="text-[11px] text-[#c7dc9c] mt-0.5"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnClearCart" onclick="clearCart()" class="hidden px-2 py-1 rounded-lg bg-rose-900/70 hover:bg-rose-800 text-rose-100 text-[11px] font-bold">
+            Xóa hết
+          </button>
+          <button onclick="toggleCart(false)" class="text-[#c7dc9c] hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+        </div>
+      </div>
+
+      <div id="cartItemsList" class="flex-1 overflow-y-auto py-3 space-y-2.5"></div>
+
+      <form onsubmit="submitOrder(event)" class="border-t border-[#2b472f] pt-3 space-y-2.5">
+        <div class="bg-[#0f1d11] p-3 rounded-2xl border border-[#2b472f] space-y-1">
+          <div class="flex justify-between text-[#c7dc9c]">
+            <span>Giỏ quà đã chọn:</span>
+            <span id="cartBoxPrice" class="font-bold text-white">0đ</span>
+          </div>
+          <div class="flex justify-between text-[#c7dc9c]">
+            <span>Tiền sản phẩm trong giỏ:</span>
+            <span id="cartItemsPrice" class="font-bold text-white">0đ</span>
+          </div>
+          <div class="flex justify-between text-sm font-black text-white pt-1 border-t border-[#2b472f]">
+            <span>Tổng thanh toán:</span>
+            <span id="cartTotal" class="text-[#c7e088]">0đ</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" id="custName" required placeholder="Tên anh/chị *" class="px-3 py-2 rounded-xl bg-[#0f1d11] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+          <input type="tel" id="custPhone" required placeholder="SĐT 10 số (0838... / 09...) *" class="px-3 py-2 rounded-xl bg-[#0f1d11] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+        </div>
+
+        <input type="text" id="custAddress" required placeholder="Địa chỉ nhận hàng / lời nhắn *" class="w-full px-3 py-2 rounded-xl bg-[#0f1d11] border border-[#3a6140] text-white placeholder-[#8ca878]" />
+
+        <button type="submit" id="btnSubmitOrder" class="w-full py-3 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-black text-xs uppercase tracking-wide">
+          Gửi Đơn Giỏ Quà
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: XÁC NHẬN ĐƠN ==================== -->
+  <div id="orderSuccessModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3">
+    <div class="forest-card rounded-3xl max-w-md w-full p-5 space-y-3.5 text-xs shadow-2xl text-center">
+      <div class="w-12 h-12 rounded-full bg-[#86a657] text-[#162919] flex items-center justify-center mx-auto text-xl">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <h3 class="text-base font-black text-white">ĐÃ GHI NHẬN ĐƠN X-BAN MÊ!</h3>
+      <p id="orderSummaryText" class="text-[#e3f0c8] leading-relaxed"></p>
+      <div class="flex gap-2">
+        <a id="orderConfirmLink" href="tel:0838346346" class="flex-1 py-2.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold">
+          Gọi Hotline 0838 346 346
+        </a>
+        <button onclick="closeModal('orderSuccessModal')" class="px-4 py-2.5 rounded-xl bg-[#213b25] text-[#d8ebb0] font-bold">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADMIN LOGIN ==================== -->
+  <div id="adminModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3">
+    <div class="forest-card rounded-3xl max-w-sm w-full p-5 space-y-3 text-xs shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#2b472f] pb-2">
+        <h3 class="text-sm font-black text-white">ĐĂNG NHẬP ADMIN X-BAN MÊ</h3>
+        <button onclick="closeModal('adminModal')" class="text-[#c7dc9c] hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <input type="password" id="adminPinInput" placeholder="Nhập mã PIN quản trị..." class="w-full px-3 py-2 rounded-xl bg-[#0f1d11] border border-[#3a6140] text-white" />
+      <button onclick="verifyAdmin()" class="w-full py-2.5 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold">Xác nhận</button>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    // Dán URL Web App của Google Apps Script (X-BAN MÊ) vào đây
+    const XBANME_GAS_URL = "";
+    const ADMIN_PIN = "204201504042019";
+    const SHOP_HOTLINE = "0838346346";
+    const CLEARANCE_BUFFER_CM = 1.5; // Luôn chừa dư +1.5 cm
+    const PACKING_FACTOR = 0.78;
+    const FALLBACK_IMG = "https://images.unsplash.com/photo-1559056199-641a0ac8b55f?auto=format&fit=crop&w=600&h=600&q=80";
+
+    // 3 GIỎ QUÀ MẶC ĐỊNH (Dài x Rộng x Cao tính bằng cm)
+    let giftBoxes = [
+      { id: "BOX_1", name: "Giỏ Quà Nhỏ", length: 22, width: 15, height: 12, price: 25000, desc: "Phù hợp phối 1–2 món đặc sản gọn nhẹ" },
+      { id: "BOX_2", name: "Giỏ Quà Tiêu Chuẩn", length: 30, width: 22, height: 14, price: 35000, desc: "Phù hợp phối 3–4 món quà biếu cân đối" },
+      { id: "BOX_3", name: "Giỏ Quà Lớn", length: 38, width: 28, height: 16, price: 45000, desc: "Giỏ lớn nhất cho nhiều món đặc sản" }
+    ];
+
+    // DANH SÁCH SẢN PHẨM MẪU (Dài x Rộng x Cao tính bằng cm)
+    let products = [
+      { id: "XB_01", name: "Cà phê Robusta rang mộc 250g", category: "Cà phê rang", netWeight: "250g", price: 115000, length: 9, width: 9, height: 11.5, status: "HIEN", image: FALLBACK_IMG, desc: "Rang chuẩn độ, vị đậm rõ ràng" },
+      { id: "XB_02", name: "Cà phê Robusta Honey 250g", category: "Cà phê rang", netWeight: "250g", price: 135000, length: 9, width: 9, height: 11.5, status: "HIEN", image: FALLBACK_IMG, desc: "Sơ chế Honey ngọt dịu tự nhiên" },
+      { id: "XB_03", name: "Sầu riêng sấy thăng hoa 120g", category: "Trái cây sấy", netWeight: "120g", price: 165000, length: 10, width: 10, height: 12, status: "HIEN", image: FALLBACK_IMG, desc: "Giòn xốp, thơm đặc trưng Đắk Lắk" },
+      { id: "XB_04", name: "Hạt mắc ca sấy nứt vỏ 300g", category: "Hạt dinh dưỡng", netWeight: "300g", price: 145000, length: 11, width: 11, height: 12, status: "HIEN", image: FALLBACK_IMG, desc: "Nhân bùi béo, nứt vỏ sẵn" },
+      { id: "XB_05", name: "Hạt điều rang muối 300g", category: "Hạt dinh dưỡng", netWeight: "300g", price: 125000, length: 11, width: 11, height: 12, status: "HIEN", image: FALLBACK_IMG, desc: "Rang muối giòn rụm" },
+      { id: "XB_06", name: "Thịt bò khô đặc sản 200g", category: "Đặc sản khác", netWeight: "200g", price: 175000, length: 10, width: 10, height: 11.5, status: "HIEN", image: FALLBACK_IMG, desc: "Đậm vị đặc sản vùng cao" }
+    ];
+
+    let currentTab = "giftbox";
+    let currentCategory = "ALL";
+    let selectedBoxId = giftBoxes[1].id;
+    let boxItems = JSON.parse(localStorage.getItem("xbanme_box_items") || "[]");
+    let isAdmin = sessionStorage.getItem("xbanme_admin") === "1";
+
+    function formatVND(n) {
+      return Number(n || 0).toLocaleString("vi-VN") + "đ";
+    }
+
+    function normalizePhone(raw) {
+      let d = String(raw || "").replace(/\D/g, "");
+      if (d.startsWith("84") && d.length >= 11) d = "0" + d.slice(2);
+      else if (d.length === 9 && !d.startsWith("0")) d = "0" + d;
+      return d;
+    }
+
+    function getActiveBox() {
+      return giftBoxes.find(b => b.id === selectedBoxId) || giftBoxes[0];
+    }
+
+    function getItemVolume(prod) {
+      return Number(prod.length || 0) * Number(prod.width || 0) * Number(prod.height || 0);
+    }
+
+    function getUsedVolume(list = boxItems) {
+      return list.reduce((s, it) => s + getItemVolume(it.product) * it.qty, 0);
+    }
+
+    function checkProductFitsBox(prod, box, addQty = 1, currentList = boxItems) {
+      const pL = Number(prod.length || 0) + CLEARANCE_BUFFER_CM;
+      const pW = Number(prod.width || 0) + CLEARANCE_BUFFER_CM;
+      const pH = Number(prod.height || 0) + CLEARANCE_BUFFER_CM;
+
+      const bL = Number(box.length || 0);
+      const bW = Number(box.width || 0);
+      const bH = Number(box.height || 0);
+
+      const fitsHeight = pH <= bH;
+      const fitsBase = (pL <= bL && pW <= bW) || (pL <= bW && pW <= bL);
+
+      if (!fitsHeight || !fitsBase) {
+        return {
+          ok: false,
+          reason: `Không thể cho "${prod.name}" (${prod.length}×${prod.width}×${prod.height} cm + dư ${CLEARANCE_BUFFER_CM} cm) vào "${box.name}" (${bL}×${bW}×${bH} cm).`
+        };
+      }
+
+      const usableVol = bL * bW * bH * PACKING_FACTOR;
+      const nextVol = getUsedVolume(currentList) + getItemVolume(prod) * addQty;
+      if (nextVol > usableVol) {
+        return {
+          ok: false,
+          reason: `"${box.name}" không đủ chỗ thoải mái (đã chừa dư ${CLEARANCE_BUFFER_CM} cm). Hãy chọn giỏ lớn hơn hoặc bớt món.`
+        };
+      }
+
+      return { ok: true, reason: "" };
+    }
+
+    function checkAllItemsFitBox(list, box) {
+      const temp = [];
+      for (const item of list) {
+        for (let k = 0; k < item.qty; k++) {
+          const res = checkProductFitsBox(item.product, box, 1, temp);
+          if (!res.ok) return res;
+        }
+        temp.push({ product: item.product, qty: item.qty });
+      }
+      return { ok: true, reason: "" };
+    }
+
+    function selectGiftBox(boxId) {
+      const target = giftBoxes.find(b => b.id === boxId);
+      if (!target) return;
+      const check = checkAllItemsFitBox(boxItems, target);
+      if (!check.ok) {
+        showFitWarning(check.reason);
+        return;
+      }
+      selectedBoxId = boxId;
+      hideFitWarning();
+      renderAll();
+    }
+
+    function addToBox(prodId) {
+      const prod = products.find(p => String(p.id) === String(prodId));
+      if (!prod) return;
+      if (currentTab !== "giftbox") switchTab("giftbox");
+
+      const check = checkProductFitsBox(prod, getActiveBox(), 1, boxItems);
+      if (!check.ok) {
+        showFitWarning(check.reason);
+        return;
+      }
+
+      hideFitWarning();
+      const idx = boxItems.findIndex(it => String(it.product.id) === String(prod.id));
+      if (idx >= 0) boxItems[idx].qty += 1;
+      else boxItems.push({ product: prod, qty: 1 });
+
+      saveBoxItems();
+      renderAll();
+    }
+
+    function changeBoxQty(prodId, delta) {
+      const idx = boxItems.findIndex(it => String(it.product.id) === String(prodId));
+      if (idx === -1) return;
+      const nextQty = boxItems[idx].qty + delta;
+      if (nextQty <= 0) {
+        boxItems.splice(idx, 1);
+        hideFitWarning();
+        saveBoxItems();
+        renderAll();
+        return;
+      }
+      if (delta > 0) {
+        const check = checkProductFitsBox(boxItems[idx].product, getActiveBox(), delta, boxItems);
+        if (!check.ok) {
+          showFitWarning(check.reason);
+          return;
+        }
+      }
+      hideFitWarning();
+      boxItems[idx].qty = nextQty;
+      saveBoxItems();
+      renderAll();
+    }
+
+    function removeBoxItem(prodId) {
+      boxItems = boxItems.filter(it => String(it.product.id) !== String(prodId));
+      hideFitWarning();
+      saveBoxItems();
+      renderAll();
+    }
+
+    function clearCart() {
+      boxItems = [];
+      hideFitWarning();
+      saveBoxItems();
+      renderAll();
+    }
+
+    function saveBoxItems() {
+      localStorage.setItem("xbanme_box_items", JSON.stringify(boxItems));
+    }
+
+    function showFitWarning(msg) {
+      const el = document.getElementById("fitWarningBox");
+      el.innerText = "⚠️ " + msg;
+      el.classList.remove("hidden");
+    }
+
+    function hideFitWarning() {
+      document.getElementById("fitWarningBox").classList.add("hidden");
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.className = "tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#213b25] text-[#d8ebb0] hover:bg-[#2b4c30] border border-[#3a6140] shrink-0 transition";
+      });
+      const active = document.getElementById("tab-" + tab);
+      if (active) active.className = "tab-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-[#86a657] text-[#162919] shrink-0 transition";
+      document.getElementById("giftBoxSection").classList.toggle("hidden", tab !== "giftbox");
+      renderProducts();
+    }
+
+    function setCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = "cat-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-[#162919] text-[#eef4d4] shrink-0";
+        } else {
+          btn.className = "cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f8faee] text-[#162919] border border-[#c2d49b] hover:bg-[#e5efd0] shrink-0";
+        }
+      });
+      renderProducts();
+    }
+
+    function renderGiftBoxes() {
+      const grid = document.getElementById("giftBoxGrid");
+      grid.innerHTML = giftBoxes.map(b => {
+        const active = b.id === selectedBoxId;
+        return `
+          <button type="button" onclick="selectGiftBox('${b.id}')" class="text-left p-3 rounded-2xl border transition ${
+            active ? "bg-[#162919] border-[#162919] text-white shadow-sm" : "bg-white border-[#c2d49b] hover:border-[#4b6b28] text-[#162919]"
+          }">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-extrabold text-xs sm:text-sm ${active ? "text-white" : "text-[#162919]"}">${b.name}</span>
+              <span class="font-black text-xs ${active ? "text-[#c7e088]" : "text-[#3b5d1c]"}">+${formatVND(b.price)}</span>
+            </div>
+            <p class="text-[11px] font-bold mt-1 ${active ? "text-[#e3f0c8]" : "text-[#344e24]"}">${b.length} × ${b.width} × ${b.height} cm</p>
+            <p class="text-[11px] mt-0.5 ${active ? "text-[#b6cf8a]" : "text-[#587148]"}">${b.desc || ""}</p>
+          </button>
+        `;
+      }).join("");
+
+      const box = getActiveBox();
+      const totalItems = boxItems.reduce((s, it) => s + it.qty, 0);
+      const maxUsable = Math.max(1, getItemVolume(box) * PACKING_FACTOR);
+      const pct = Math.min(100, Math.round((getUsedVolume(boxItems) / maxUsable) * 100));
+
+      document.getElementById("cartBadge").innerText = totalItems;
+      document.getElementById("activeBoxLabel").innerText = `${box.name} (${box.length}×${box.width}×${box.height} cm)`;
+      document.getElementById("boxUsagePct").innerText = `${pct}%`;
+      document.getElementById("boxUsageBar").style.width = `${pct}%`;
+      document.getElementById("boxFitStatusText").innerText = `Chừa dư +${CLEARANCE_BUFFER_CM} cm • Đang có ${totalItems} món`;
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("productGrid");
+      const empty = document.getElementById("emptyState");
+      const kw = (document.getElementById("searchInput").value || "").toLowerCase().trim();
+      const box = getActiveBox();
+
+      const visible = products.filter(p => {
+        const status = String(p.status || "HIEN").trim().toUpperCase();
+        if (!isAdmin && status === "AN") return false;
+        const matchCat = currentCategory === "ALL" || String(p.category || "").toLowerCase() === currentCategory.toLowerCase();
+        const matchKw = !kw || String(p.name || "").toLowerCase().includes(kw) || String(p.desc || "").toLowerCase().includes(kw);
+        return matchCat && matchKw;
+      });
+
+      if (!visible.length) {
+        grid.innerHTML = "";
+        empty.classList.remove("hidden");
+        return;
+      }
+
+      empty.classList.add("hidden");
+      grid.innerHTML = visible.map(p => {
+        const isHidden = String(p.status || "").toUpperCase() === "AN";
+        const fit = checkProductFitsBox(p, box, 1, boxItems);
+
+        return `
+          <article class="forest-card rounded-2xl overflow-hidden flex flex-col justify-between ${fit.ok ? "" : "opacity-75"}">
+            <div>
+              <div class="relative aspect-square bg-[#0f1d11] overflow-hidden">
+                <img src="${p.image || FALLBACK_IMG}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy" />
+                ${isHidden ? `<span class="absolute top-2 left-2 px-2 py-0.5 rounded-lg bg-rose-900/90 border border-rose-400/40 text-[10px] font-extrabold text-rose-100">Đang ẩn (AN)</span>` : ""}
+              </div>
+              <div class="p-3 space-y-1">
+                <p class="text-[10px] font-bold text-[#c7e088]">${p.category || "Đặc sản Đắk Lắk"}${p.netWeight ? ` • ${p.netWeight}` : ""}</p>
+                <h3 class="text-xs sm:text-sm font-extrabold text-white line-clamp-2">${p.name}</h3>
+                <p class="text-[11px] font-semibold text-[#d8ebb0]">Kích thước: ${p.length} × ${p.width} × ${p.height} cm</p>
+              </div>
+            </div>
+
+            <div class="px-3 pb-3 pt-1 space-y-2">
+              <div class="text-sm sm:text-base font-black text-[#c7e088]">${formatVND(p.price)}</div>
+              ${
+                fit.ok
+                  ? `<button type="button" onclick="addToBox('${p.id}')" class="w-full py-1.5 px-2 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold text-[11px] transition">
+                       + Cho vào giỏ quà
+                     </button>`
+                  : `<button type="button" onclick="showFitWarning('${fit.reason.replace(/'/g, "\\'")}')" class="w-full py-1.5 px-2 rounded-xl bg-rose-950/80 border border-rose-400/50 text-rose-200 font-bold text-[11px]">
+                       Không vừa giỏ này
+                     </button>`
+              }
+              ${
+                isAdmin
+                  ? `<button type="button" onclick="toggleProductStatus('${p.id}', '${isHidden ? "HIEN" : "AN"}')" class="w-full py-1 rounded-lg bg-[#213b25] hover:bg-[#2b4c30] text-[10px] font-bold text-[#e3f0c8]">
+                       ${isHidden ? "Hiện sản phẩm" : "Ẩn sản phẩm (AN)"}
+                     </button>`
+                  : ""
+              }
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderCart() {
+      const box = getActiveBox();
+      document.getElementById("drawerActiveBox").innerText = `${box.name} (${box.length}×${box.width}×${box.height} cm) • +${formatVND(box.price)}`;
+
+      const list = document.getElementById("cartItemsList");
+      const btnClear = document.getElementById("btnClearCart");
+
+      if (!boxItems.length) {
+        btnClear.classList.add("hidden");
+        list.innerHTML = `<div class="text-center text-[#9ab57c] py-10">Chưa có sản phẩm nào trong giỏ quà.</div>`;
+        document.getElementById("cartBoxPrice").innerText = formatVND(box.price);
+        document.getElementById("cartItemsPrice").innerText = "0đ";
+        document.getElementById("cartTotal").innerText = formatVND(box.price);
+        return;
+      }
+
+      btnClear.classList.remove("hidden");
+      let itemsSum = 0;
+
+      list.innerHTML = boxItems.map(it => {
+        itemsSum += it.product.price * it.qty;
+        return `
+          <div class="p-2.5 rounded-2xl bg-[#0f1d11] border border-[#2b472f] flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <p class="font-bold text-white truncate">${it.product.name}</p>
+              <p class="text-[11px] text-[#c7dc9c]">${it.product.length}×${it.product.width}×${it.product.height} cm • <span class="text-[#c7e088] font-bold">${formatVND(it.product.price)}</span></p>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" onclick="changeBoxQty('${it.product.id}', -1)" class="w-6 h-6 rounded-lg bg-[#213b25] text-white font-bold">-</button>
+              <span class="w-5 text-center font-extrabold">${it.qty}</span>
+              <button type="button" onclick="changeBoxQty('${it.product.id}', 1)" class="w-6 h-6 rounded-lg bg-[#213b25] text-white font-bold">+</button>
+              <button type="button" onclick="removeBoxItem('${it.product.id}')" class="w-6 h-6 rounded-lg bg-rose-900/70 text-rose-100 flex items-center justify-center">
+                <i class="fa-solid fa-trash-can text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("cartBoxPrice").innerText = formatVND(box.price);
+      document.getElementById("cartItemsPrice").innerText = formatVND(itemsSum);
+      document.getElementById("cartTotal").innerText = formatVND(box.price + itemsSum);
+    }
+
+    function renderAll() {
+      renderGiftBoxes();
+      renderProducts();
+      renderCart();
+      populateBoxEditDropdown();
+    }
+
+    function populateBoxEditDropdown() {
+      const sel = document.getElementById("boxSelectEdit");
+      if (!sel) return;
+      const currentVal = sel.value || giftBoxes[0].id;
+      sel.innerHTML = giftBoxes.map(b => `<option value="${b.id}">${b.name} (${b.length}×${b.width}×${b.height})</option>`).join("");
+      sel.value = giftBoxes.some(b => b.id === currentVal) ? currentVal : giftBoxes[0].id;
+      fillBoxForm();
+    }
+
+    function fillBoxForm() {
+      const id = document.getElementById("boxSelectEdit").value;
+      const box = giftBoxes.find(b => b.id === id);
+      if (!box) return;
+      document.getElementById("boxNameInput").value = box.name;
+      document.getElementById("boxLengthInput").value = box.length;
+      document.getElementById("boxWidthInput").value = box.width;
+      document.getElementById("boxHeightInput").value = box.height;
+      document.getElementById("boxPriceInput").value = box.price;
+      document.getElementById("boxDescInput").value = box.desc || "";
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleAddProduct(e) {
+      e.preventDefault();
+      const name = document.getElementById("apName").value.trim();
+      const category = document.getElementById("apCategory").value;
+      const netWeight = document.getElementById("apNetWeight").value.trim();
+      const price = Number(document.getElementById("apPrice").value || 0);
+      const length = Number(document.getElementById("apLength").value || 10);
+      const width = Number(document.getElementById("apWidth").value || 10);
+      const height = Number(document.getElementById("apHeight").value || 10);
+      const status = document.getElementById("apStatus").value;
+      const desc = document.getElementById("apDesc").value.trim();
+      let image = document.getElementById("apImageUrl").value.trim() || FALLBACK_IMG;
+
+      let imageBase64 = "";
+      const fileInput = document.getElementById("apImageFile");
+      if (fileInput.files && fileInput.files[0]) {
+        imageBase64 = await fileToBase64(fileInput.files[0]);
+        image = imageBase64;
+      }
+
+      const newProd = {
+        id: "XB" + Date.now().toString().slice(-5),
+        name,
+        category,
+        netWeight,
+        price,
+        length,
+        width,
+        height,
+        status,
+        image,
+        desc
+      };
+
+      products.push(newProd);
+      renderProducts();
+
+      if (XBANME_GAS_URL) {
+        try {
+          await fetch(XBANME_GAS_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "addProduct", product: newProd, imageBase64 })
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      e.target.reset();
+      alert("Đã thêm sản phẩm mới!");
+    }
+
+    async function handleSaveBox(e) {
+      e.preventDefault();
+      const id = document.getElementById("boxSelectEdit").value;
+      const updatedBox = {
+        id,
+        name: document.getElementById("boxNameInput").value.trim(),
+        length: Number(document.getElementById("boxLengthInput").value || 25),
+        width: Number(document.getElementById("boxWidthInput").value || 18),
+        height: Number(document.getElementById("boxHeightInput").value || 12),
+        price: Number(document.getElementById("boxPriceInput").value || 0),
+        desc: document.getElementById("boxDescInput").value.trim()
+      };
+
+      giftBoxes = giftBoxes.map(b => b.id === id ? updatedBox : b);
+      renderAll();
+
+      if (XBANME_GAS_URL) {
+        try {
+          await fetch(XBANME_GAS_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "saveBox", box: updatedBox })
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      alert("Đã cập nhật giỏ quà!");
+    }
+
+    async function toggleProductStatus(prodId, nextStatus) {
+      products = products.map(p => String(p.id) === String(prodId) ? { ...p, status: nextStatus } : p);
+      renderProducts();
+
+      if (XBANME_GAS_URL) {
+        try {
+          await fetch(XBANME_GAS_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "updateProductStatus", id: prodId, status: nextStatus })
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
+    function toggleCart(open) {
+      document.getElementById("cartDrawer").classList.toggle("hidden", !open);
+      if (open) renderCart();
+    }
+
+    async function submitOrder(e) {
+      e.preventDefault();
+      if (!boxItems.length) return alert("Hãy chọn ít nhất 1 sản phẩm vào giỏ quà!");
+
+      const name = document.getElementById("custName").value.trim();
+      const phone = normalizePhone(document.getElementById("custPhone").value);
+      if (phone.length !== 10) return alert("Vui lòng nhập số điện thoại 10 số hợp lệ.");
+
+      const address = document.getElementById("custAddress").value.trim();
+      const box = getActiveBox();
+      const itemsSum = boxItems.reduce((s, it) => s + it.product.price * it.qty, 0);
+      const total = box.price + itemsSum;
+      const itemsSummary = boxItems.map(it => `${it.product.name} x${it.qty}`).join(" | ");
+      const orderCode = "XB" + Date.now().toString().slice(-6);
+
+      if (XBANME_GAS_URL) {
+        try {
+          await fetch(XBANME_GAS_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "createOrder",
+              orderCode,
+              customerName: name,
+              customerPhone: phone,
+              boxName: box.name,
+              items: itemsSummary,
+              totalAmount: total,
+              address
+            })
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      document.getElementById("orderSummaryText").innerHTML =
+        `Mã đơn <strong>#${orderCode}</strong> của <strong>${name}</strong> (${phone})<br/>Giỏ quà: <strong>${box.name}</strong><br/>Món: ${itemsSummary}<br/>Tổng: <strong class="text-[#c7e088]">${formatVND(total)}</strong>`;
+
+      clearCart();
+      toggleCart(false);
+      document.getElementById("orderSuccessModal").classList.remove("hidden");
+    }
+
+    function openAdminModal() {
+      if (isAdmin) {
+        document.getElementById("adminPanel").classList.toggle("hidden");
+        return;
+      }
+      document.getElementById("adminModal").classList.remove("hidden");
+    }
+
+    function verifyAdmin() {
+      const pin = document.getElementById("adminPinInput").value.trim();
+      if (pin === ADMIN_PIN) {
+        isAdmin = true;
+        sessionStorage.setItem("xbanme_admin", "1");
+        document.getElementById("adminPanel").classList.remove("hidden");
+        document.getElementById("adminLockIcon").className = "fa-solid fa-unlock text-[#c7e088]";
+        renderProducts();
+        closeModal("adminModal");
+      } else {
+        alert("Mã PIN quản trị chưa đúng!");
+      }
+    }
+
+    function logoutAdmin() {
+      isAdmin = false;
+      sessionStorage.removeItem("xbanme_admin");
+      document.getElementById("adminPanel").classList.add("hidden");
+      document.getElementById("adminLockIcon").className = "fa-solid fa-lock";
+      renderProducts();
+    }
+
+    async function syncFromSheet(showAlert = false) {
+      if (!XBANME_GAS_URL) {
+        if (showAlert) alert("Chưa gắn link XBANME_GAS_URL. Đang dùng dữ liệu mẫu X-BAN MÊ.");
+        return;
+      }
+      const icon = document.getElementById("syncIcon");
+      icon.classList.add("fa-spin");
+      try {
+        const res = await fetch(XBANME_GAS_URL + "?t=" + Date.now());
+        const data = await res.json();
+        if (data && Array.isArray(data.products) && data.products.length) {
+          products = data.products;
+        }
+        if (data && Array.isArray(data.boxes) && data.boxes.length) {
+          giftBoxes = data.boxes;
+          if (!giftBoxes.some(b => b.id === selectedBoxId)) {
+            selectedBoxId = giftBoxes[0].id;
+          }
+        }
+        renderAll();
+        if (showAlert) alert("Đã đồng bộ dữ liệu từ Google Sheets!");
+      } catch (err) {
+        console.error(err);
+        if (showAlert) alert("Không tải được dữ liệu từ Google Sheets.");
+      } finally {
+        icon.classList.remove("fa-spin");
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add("hidden");
+    }
+
+    if (isAdmin) {
+      document.getElementById("adminPanel").classList.remove("hidden");
+      document.getElementById("adminLockIcon").className = "fa-solid fa-unlock text-[#c7e088]";
+    }
+
+    renderAll();
+    syncFromSheet(false);
+  </script>
+</body>
+</html>
+
