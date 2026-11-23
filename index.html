@@ -162,7 +162,7 @@
           <button type="submit" class="w-full py-2.5 rounded-xl bg-[#c7e088] hover:bg-[#d5eb9d] text-[#162919] font-extrabold">
             Lưu Thông Tin Giỏ Quà
           </button>
-          <p class="text-[11px] text-[#c7dc9c]">Hệ thống luôn tự động chừa dư <strong class="text-white">+1.5 cm</strong> để xếp sản phẩm rộng rãi, không cấn.</p>
+          <p class="text-[11px] text-[#c7dc9c]">Hệ thống tự động kiểm tra độ vừa vặn để xếp sản phẩm gọn gàng.</p>
         </form>
       </div>
     </section>
@@ -173,7 +173,7 @@
         <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#86a657] text-[#162919] text-[10px] font-extrabold uppercase tracking-wide">
           HỘ KINH DOANH X-BAN MÊ • BUÔN MA THUỘT
         </span>
-        <h2 class="text-sm sm:text-base font-extrabold text-white pt-0.5">Tự phối giỏ quà nông sản — Tự động kiểm tra vừa giỏ (+1.5 cm)</h2>
+        <h2 class="text-sm sm:text-base font-extrabold text-white pt-0.5">Tự phối giỏ quà nông sản — Tự động kiểm tra vừa giỏ</h2>
         <p class="text-xs text-[#c7dc9c]">24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: 0838 346 346</p>
       </div>
       <a href="tel:0838346346" class="px-3.5 py-2 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] text-xs font-extrabold shrink-0 text-center transition">
@@ -185,7 +185,7 @@
     <section id="giftBoxSection" class="soft-panel rounded-2xl p-3.5 space-y-3">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
         <h3 class="text-xs sm:text-sm font-extrabold text-[#162919] flex items-center gap-1.5">
-          <i class="fa-solid fa-gift text-[#4b6b28]"></i>Chọn 1 trong 3 giỏ quà có sẵn (chừa dư +1.5 cm rộng rãi)
+          <i class="fa-solid fa-gift text-[#4b6b28]"></i>Chọn 1 trong 3 giỏ quà có sẵn
         </h3>
         <span id="boxFitStatusText" class="text-[11px] font-bold text-[#3b5d1c]"></span>
       </div>
@@ -235,30 +235,10 @@
   </main>
 
   <!-- ==================== FOOTER ==================== -->
-  <footer class="border-t border-[#2b472f] bg-[#162919] py-6 px-3.5 text-[11px] text-[#c7dc9c] mt-8">
-    <div class="max-w-5xl mx-auto space-y-3">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-3 border-b border-[#2b472f]">
-        <div class="space-y-1">
-          <p class="text-xs font-black text-white tracking-tight">HỘ KINH DOANH X-BAN MÊ</p>
-          <p class="text-[#e3f0c8]">
-            <i class="fa-solid fa-location-dot text-[#86a657] mr-1.5"></i>24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk
-          </p>
-          <p>
-            <i class="fa-solid fa-phone text-[#86a657] mr-1.5"></i>Hotline: <a href="tel:0838346346" class="text-[#c7e088] font-extrabold hover:underline">0838 346 346</a>
-          </p>
-        </div>
-
-        <div class="space-y-1 sm:text-right">
-          <p class="text-xs font-bold text-white">Phối Giỏ Quà & Đặt Hàng</p>
-          <p>Tự động kiểm tra kích thước & chừa dư +1.5 cm rộng rãi</p>
-          <p>Hỗ trợ đặt nhanh qua Hotline 0838 346 346</p>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] text-[#9ab57c]">
-        <span>© 2026 HỘ KINH DOANH X-BAN MÊ • 24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk</span>
-        <span>Hotline: 0838 346 346</span>
-      </div>
+  <footer class="border-t border-[#2b472f] bg-[#162919] py-4 px-3.5 text-xs text-[#c7dc9c] mt-8">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+      <span class="font-bold text-white">HỘ KINH DOANH X-BAN MÊ</span>
+      <span>24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: <a href="tel:0838346346" class="text-[#c7e088] font-extrabold hover:underline">0838 346 346</a></span>
     </div>
   </footer>
 
@@ -295,7 +275,7 @@
             <p id="detailPrice" class="text-lg font-black text-[#c7e088]"></p>
           </div>
 
-          <div class="bg-[#0f1d11] border border-[#2b472f] rounded-2xl p-2.5 grid grid-cols-3 gap-2 text-[11px]">
+          <div class="bg-[#0f1d11] border border-[#2b472f] rounded-2xl p-2.5 grid grid-cols-2 gap-2 text-[11px]">
             <div>
               <span class="text-[#9ab57c] block">Khối lượng tịnh</span>
               <span id="detailWeight" class="font-bold text-white"></span>
@@ -303,10 +283,6 @@
             <div>
               <span class="text-[#9ab57c] block">Kích thước món</span>
               <span id="detailDims" class="font-bold text-white"></span>
-            </div>
-            <div>
-              <span class="text-[#9ab57c] block">Chừa dư xếp giỏ</span>
-              <span class="font-bold text-[#c7e088]">+1.5 cm</span>
             </div>
           </div>
 
@@ -446,10 +422,9 @@
     const XBANME_GAS_URL = "https://script.google.com/macros/s/AKfycbz1963L4fdLMD3msUBb5xteMHf6b7BdAaZN0gvTGBam-xUd2L9BFk0A60iGZLr5ENX7-Q/exec";
     const ADMIN_PIN = "204201504042019";
     const SHOP_HOTLINE = "0838346346";
-    const CLEARANCE_BUFFER_CM = 1.5; // Luôn chừa dư +1.5 cm
+    const CLEARANCE_BUFFER_CM = 1.5;
     const PACKING_FACTOR = 0.78;
-    const MAX_PRODUCT_IMAGES = 6; // Tối đa 6 ảnh mỗi sản phẩm
-    const FALLBACK_IMG = "";
+    const MAX_PRODUCT_IMAGES = 6;
 
     // 3 GIỎ QUÀ MẶC ĐỊNH (Dài x Rộng x Cao tính bằng cm)
     let giftBoxes = [
@@ -458,7 +433,7 @@
       { id: "BOX_3", name: "Giỏ Quà Lớn", length: 38, width: 28, height: 16, price: 45000, desc: "Giỏ lớn nhất cho nhiều món đặc sản" }
     ];
 
-    // DANH SÁCH SẢN PHẨM (trống để nạp từ Google Sheets hoặc đăng mới qua Admin)
+    // DANH SÁCH SẢN PHẨM (nạp từ Google Sheets hoặc đăng mới qua Admin)
     let products = [];
 
     let currentTab = "giftbox";
@@ -522,7 +497,7 @@
       if (!fitsHeight || !fitsBase) {
         return {
           ok: false,
-          reason: `Không thể cho "${prod.name}" (${prod.length}×${prod.width}×${prod.height} cm + dư ${CLEARANCE_BUFFER_CM} cm) vào "${box.name}" (${bL}×${bW}×${bH} cm).`
+          reason: `Không thể cho "${prod.name}" (${prod.length}×${prod.width}×${prod.height} cm) vào "${box.name}" (${bL}×${bW}×${bH} cm).`
         };
       }
 
@@ -531,7 +506,7 @@
       if (nextVol > usableVol) {
         return {
           ok: false,
-          reason: `"${box.name}" không đủ chỗ thoải mái (đã chừa dư ${CLEARANCE_BUFFER_CM} cm). Hãy chọn giỏ lớn hơn hoặc bớt món.`
+          reason: `"${box.name}" không đủ chỗ thoải mái. Hãy chọn giỏ lớn hơn hoặc bớt món.`
         };
       }
 
@@ -572,7 +547,6 @@
 
     function renderDetailGallery(prod) {
       const imgs = getProductImages(prod);
-      const mainWrap = document.getElementById("detailMainImg").parentElement;
       const mainImg = document.getElementById("detailMainImg");
       const thumbRow = document.getElementById("detailThumbRow");
 
@@ -580,7 +554,6 @@
         mainImg.classList.add("hidden");
         thumbRow.innerHTML = "";
         document.getElementById("detailImgCount").innerText = `0/${MAX_PRODUCT_IMAGES} ảnh`;
-        mainWrap.dataset.empty = "1";
         return;
       }
 
@@ -623,7 +596,7 @@
 
       if (fit.ok) {
         notice.className = "p-2.5 rounded-xl bg-[#213b25] border border-[#3a6140] text-[#c7e088] text-[11px] font-bold";
-        notice.innerText = `✓ Vừa thoải mái trong ${box.name} (${box.length}×${box.width}×${box.height} cm) khi chừa dư +${CLEARANCE_BUFFER_CM} cm.`;
+        notice.innerText = `✓ Vừa thoải mái trong ${box.name} (${box.length}×${box.width}×${box.height} cm).`;
         addBtn.disabled = false;
         addBtn.className = "flex-1 py-2.5 px-4 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-black text-xs transition";
         addBtn.innerText = `+ Cho vào giỏ quà (${formatVND(prod.price * detailQty)})`;
@@ -855,7 +828,7 @@
       document.getElementById("activeBoxLabel").innerText = `${box.name} (${box.length}×${box.width}×${box.height} cm)`;
       document.getElementById("boxUsagePct").innerText = `${pct}%`;
       document.getElementById("boxUsageBar").style.width = `${pct}%`;
-      document.getElementById("boxFitStatusText").innerText = `Chừa dư +${CLEARANCE_BUFFER_CM} cm • Đang có ${totalItems} món`;
+      document.getElementById("boxFitStatusText").innerText = `Đang có ${totalItems} món`;
     }
 
     function renderProducts() {
