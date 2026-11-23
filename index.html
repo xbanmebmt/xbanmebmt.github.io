@@ -316,8 +316,12 @@
 
       <div class="p-4 space-y-3.5 max-h-[85vh] overflow-y-auto">
         <div class="space-y-2.5">
-          <div class="w-full h-64 sm:h-72 rounded-2xl bg-[#f4f6f8] border border-[#2b472f] overflow-hidden flex items-center justify-center">
+          <div id="detailMainWrap" class="w-full h-64 sm:h-72 rounded-2xl bg-[#f4f6f8] border border-[#2b472f] overflow-hidden flex items-center justify-center">
             <img id="detailMainImg" src="" alt="" class="w-full h-full object-contain" />
+            <div id="detailNoImgPlaceholder" class="hidden text-[#4a613b] text-xs font-semibold flex flex-col items-center gap-1.5">
+              <i class="fa-regular fa-image text-2xl"></i>
+              <span>Sản phẩm chưa có ảnh</span>
+            </div>
           </div>
           <div id="detailThumbRow" class="grid grid-cols-6 gap-2"></div>
         </div>
@@ -509,7 +513,7 @@
         title: "Giao nhận & Thanh toán",
         html: `
           <p>• Giao hàng khu vực Buôn Ma Thuột và gửi đi các tỉnh theo thỏa thuận đơn hàng.</p>
-          <p>• Hình thức thanh toán: <strong>Tiền mặt khi nhận hàng (COD)</strong> hoặc chuyển khoản theo thông tin Hộ kinh doanh xác nhận.</p>
+          <p>• Hình thức thanh toán: <strong>Tiền mặt khi nhận hàng (COD)</strong> hoặc chuyển khoản theo thông tin đơn hàng của Hộ kinh doanh.</p>
         `
       },
       privacy: {
@@ -529,16 +533,44 @@
       document.getElementById("policyModal").classList.remove("hidden");
     }
 
-    function getProductImages(prod) {
-      let rawList = [];
-      if (Array.isArray(prod.images) && prod.images.length) {
-        rawList = prod.images;
-      } else if (typeof prod.images === "string" && prod.images.trim()) {
-        rawList = prod.images.split(/[\n,|]+/).map(s => s.trim()).filter(Boolean);
-      } else if (prod.image) {
-        rawList = [prod.image];
+    function toDirectImageUrl(url) {
+      const s = String(url || "").trim();
+      if (!s) return "";
+      if (s.startsWith("data:image/")) return s;
+
+      const driveFileMatch = s.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (driveFileMatch && driveFileMatch[1]) {
+        return `https://lh3.googleusercontent.com/d/${driveFileMatch[1]}`;
       }
-      return rawList.filter(Boolean).slice(0, MAX_PRODUCT_IMAGES);
+      const driveOpenMatch = s.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (s.includes("drive.google.com") && driveOpenMatch && driveOpenMatch[1]) {
+        return `https://lh3.googleusercontent.com/d/${driveOpenMatch[1]}`;
+      }
+      return s;
+    }
+
+    function getProductImages(prod) {
+      if (!prod) return [];
+      const sources = [
+        prod.images,
+        prod.image,
+        prod.HinhAnh,
+        prod.hinhAnh,
+        prod.anh,
+        prod.img
+      ];
+      let rawList = [];
+
+      for (const src of sources) {
+        if (Array.isArray(src) && src.length) {
+          rawList = rawList.concat(src);
+        } else if (typeof src === "string" && src.trim()) {
+          rawList = rawList.concat(src.split(/[\n,|]+/).map(s => s.trim()).filter(Boolean));
+        }
+      }
+
+      const unique = Array.from(new Set(rawList.map(toDirectImageUrl).filter(Boolean)));
+      return unique.slice(0, MAX_PRODUCT_IMAGES);
     }
 
     function formatVND(n) {
@@ -630,15 +662,18 @@
     function renderDetailGallery(prod) {
       const imgs = getProductImages(prod);
       const mainImg = document.getElementById("detailMainImg");
+      const placeholder = document.getElementById("detailNoImgPlaceholder");
       const thumbRow = document.getElementById("detailThumbRow");
 
       if (!imgs.length) {
         mainImg.classList.add("hidden");
+        placeholder.classList.remove("hidden");
         thumbRow.innerHTML = "";
         document.getElementById("detailImgCount").innerText = `0/${MAX_PRODUCT_IMAGES} ảnh`;
         return;
       }
 
+      placeholder.classList.add("hidden");
       mainImg.classList.remove("hidden");
       if (activeDetailImgIndex >= imgs.length) activeDetailImgIndex = 0;
 
@@ -1113,7 +1148,7 @@
 
         const urlList = document.getElementById("apImageUrl").value
           .split(/[\n,|]+/)
-          .map(s => s.trim())
+          .map(s => toDirectImageUrl(s))
           .filter(Boolean)
           .slice(0, MAX_PRODUCT_IMAGES);
 
@@ -1146,7 +1181,6 @@
         products.unshift(newProd);
         renderProducts();
 
-        const httpImgs = finalImages.filter(u => String(u).startsWith("http"));
         if (XBANME_GAS_URL) {
           await fetch(XBANME_GAS_URL, {
             method: "POST",
@@ -1154,7 +1188,11 @@
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({
               action: "addProduct",
-              product: { ...newProd, image: httpImgs[0] || "", images: httpImgs }
+              product: {
+                ...newProd,
+                image: finalImages[0] || "",
+                images: finalImages
+              }
             })
           });
         }
