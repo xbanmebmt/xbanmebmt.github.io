@@ -235,12 +235,66 @@
   </main>
 
   <!-- ==================== FOOTER ==================== -->
-  <footer class="border-t border-[#2b472f] bg-[#162919] py-4 px-3.5 text-xs text-[#c7dc9c] mt-8">
-    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-      <span class="font-bold text-white">HỘ KINH DOANH X-BAN MÊ</span>
-      <span>24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: <a href="tel:0838346346" class="text-[#c7e088] font-extrabold hover:underline">0838 346 346</a></span>
+  <footer class="border-t border-[#2b472f] bg-[#162919] py-6 px-4 text-xs text-[#c7dc9c] mt-8">
+    <div class="max-w-5xl mx-auto space-y-4">
+      <div class="space-y-1.5">
+        <p class="text-sm font-black text-white tracking-wide uppercase">X-BAN MÊ BMT</p>
+        <p class="text-[#e3f0c8]">
+          <i class="fa-solid fa-store text-[#86a657] mr-1.5"></i>Chủ sở hữu: <strong class="text-white">Hộ Kinh Doanh X-Ban Mê</strong>
+        </p>
+        <p class="text-[#e3f0c8]">
+          <i class="fa-solid fa-location-dot text-[#86a657] mr-1.5"></i>Địa chỉ: 24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Tỉnh Đắk Lắk
+        </p>
+        <p class="text-[#e3f0c8]">
+          <i class="fa-solid fa-file-lines text-[#86a657] mr-1.5"></i>Đăng ký kinh doanh: Hộ Kinh Doanh X-Ban Mê
+        </p>
+      </div>
+
+      <div class="space-y-1.5">
+        <p class="text-xs font-extrabold text-white">Đặt Hàng & Hỗ Trợ Khách Hàng</p>
+        <p class="text-[#e3f0c8]">
+          Hotline đặt hàng: <a href="tel:0838346346" class="text-[#c7e088] font-extrabold hover:underline">0838 346 346</a>
+        </p>
+        <p class="text-[#e3f0c8]">
+          Thanh toán: <strong class="text-white">Tiền mặt khi nhận hàng (COD)</strong> hoặc chuyển khoản theo thông tin đơn hàng của Hộ kinh doanh
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+        <button type="button" onclick="openShareQrModal()" class="text-[#c7e088] font-bold hover:underline">
+          Chia sẻ / Mã QR Shop
+        </button>
+        <button type="button" onclick="openPolicyModal('policy')" class="text-[#e3f0c8] underline hover:text-white">
+          Chính sách bán hàng & Đổi trả
+        </button>
+        <button type="button" onclick="openPolicyModal('shipping')" class="text-[#e3f0c8] underline hover:text-white">
+          Giao nhận & Thanh toán
+        </button>
+        <button type="button" onclick="openPolicyModal('privacy')" class="text-[#e3f0c8] underline hover:text-white">
+          Bảo mật thông tin
+        </button>
+      </div>
+
+      <div class="border-t border-[#2b472f] pt-3 space-y-1 text-[11px] text-[#9ab57c]">
+        <p>© 2026 Hộ Kinh Doanh X-Ban Mê • Website giới thiệu & phối giỏ quà nông sản Buôn Ma Thuột</p>
+        <p>Hỗ trợ trực tiếp: 24/5 Hà Huy Tập, Phường Buôn Ma Thuột, Đắk Lắk • Hotline: 0838 346 346</p>
+      </div>
     </div>
   </footer>
+
+  <!-- ==================== MODAL: CHÍNH SÁCH & THÔNG TIN ==================== -->
+  <div id="policyModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3" onclick="if(event.target===this) closeModal('policyModal')">
+    <div class="forest-card rounded-3xl max-w-md w-full p-5 space-y-3 text-xs shadow-2xl border-[#86a657]">
+      <div class="flex items-center justify-between border-b border-[#2b472f] pb-2.5">
+        <h3 id="policyTitle" class="text-sm font-black text-white"></h3>
+        <button type="button" onclick="closeModal('policyModal')" class="text-[#c7dc9c] hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+      </div>
+      <div id="policyBody" class="text-[#e3f0c8] space-y-2 leading-relaxed"></div>
+      <button type="button" onclick="closeModal('policyModal')" class="w-full py-2 rounded-xl bg-[#86a657] hover:bg-[#97b865] text-[#162919] font-extrabold">
+        Đã hiểu
+      </button>
+    </div>
+  </div>
 
   <!-- ==================== MODAL: CHI TIẾT SẢN PHẨM (TỐI ĐA 6 ẢNH) ==================== -->
   <div id="productDetailModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3" onclick="if(event.target===this) closeModal('productDetailModal')">
@@ -261,7 +315,6 @@
       </div>
 
       <div class="p-4 space-y-3.5 max-h-[85vh] overflow-y-auto">
-        <!-- KHUNG ẢNH CHÍNH TO + DÃY THUMBNAIL TỐI ĐA 6 ẢNH -->
         <div class="space-y-2.5">
           <div class="w-full h-64 sm:h-72 rounded-2xl bg-[#f4f6f8] border border-[#2b472f] overflow-hidden flex items-center justify-center">
             <img id="detailMainImg" src="" alt="" class="w-full h-full object-contain" />
@@ -418,7 +471,6 @@
 
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
-    // URL Web App của Google Apps Script (X-BAN MÊ)
     const XBANME_GAS_URL = "https://script.google.com/macros/s/AKfycbz1963L4fdLMD3msUBb5xteMHf6b7BdAaZN0gvTGBam-xUd2L9BFk0A60iGZLr5ENX7-Q/exec";
     const ADMIN_PIN = "204201504042019";
     const SHOP_HOTLINE = "0838346346";
@@ -426,14 +478,12 @@
     const PACKING_FACTOR = 0.78;
     const MAX_PRODUCT_IMAGES = 6;
 
-    // 3 GIỎ QUÀ MẶC ĐỊNH (Dài x Rộng x Cao tính bằng cm)
     let giftBoxes = [
       { id: "BOX_1", name: "Giỏ Quà Nhỏ", length: 22, width: 15, height: 12, price: 25000, desc: "Phù hợp phối 1–2 món đặc sản gọn nhẹ" },
       { id: "BOX_2", name: "Giỏ Quà Tiêu Chuẩn", length: 30, width: 22, height: 14, price: 35000, desc: "Phù hợp phối 3–4 món quà biếu cân đối" },
       { id: "BOX_3", name: "Giỏ Quà Lớn", length: 38, width: 28, height: 16, price: 45000, desc: "Giỏ lớn nhất cho nhiều món đặc sản" }
     ];
 
-    // DANH SÁCH SẢN PHẨM (nạp từ Google Sheets hoặc đăng mới qua Admin)
     let products = [];
 
     let currentTab = "giftbox";
@@ -446,6 +496,38 @@
     let detailQty = 1;
     let currentShareUrl = window.location.href;
     let currentShareTitle = document.title;
+
+    const POLICY_CONTENT = {
+      policy: {
+        title: "Chính sách bán hàng & Đổi trả",
+        html: `
+          <p>• Sản phẩm nông sản đặc sản của <strong>Hộ Kinh Doanh X-Ban Mê</strong> được kiểm tra đóng gói trước khi giao.</p>
+          <p>• Hỗ trợ đổi/xử lý nhanh nếu hàng hóa gặp sự cố hư hỏng, bể vỡ hoặc giao sai món trong quá trình vận chuyển khi khách phản hồi sớm qua Hotline <strong>0838 346 346</strong>.</p>
+        `
+      },
+      shipping: {
+        title: "Giao nhận & Thanh toán",
+        html: `
+          <p>• Giao hàng khu vực Buôn Ma Thuột và gửi đi các tỉnh theo thỏa thuận đơn hàng.</p>
+          <p>• Hình thức thanh toán: <strong>Tiền mặt khi nhận hàng (COD)</strong> hoặc chuyển khoản theo thông tin Hộ kinh doanh xác nhận.</p>
+        `
+      },
+      privacy: {
+        title: "Bảo mật thông tin",
+        html: `
+          <p>• Thông tin tên, số điện thoại và địa chỉ giao hàng chỉ dùng để liên hệ xác nhận và giao đơn hàng cho khách.</p>
+          <p>• Không chia sẻ thông tin khách hàng cho bên thứ ba trái phép.</p>
+        `
+      }
+    };
+
+    function openPolicyModal(key) {
+      const item = POLICY_CONTENT[key];
+      if (!item) return;
+      document.getElementById("policyTitle").innerText = item.title;
+      document.getElementById("policyBody").innerHTML = item.html;
+      document.getElementById("policyModal").classList.remove("hidden");
+    }
 
     function getProductImages(prod) {
       let rawList = [];
